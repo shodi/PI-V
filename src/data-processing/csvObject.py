@@ -19,18 +19,16 @@ class CSVObject:
     def remove_null_columns(self, lines):
         null_qtty = {}  # por coluna
         line_qtty = 0
-        for idx, line in enumerate(lines):
+        for row_number, line in enumerate(lines):
             for index, item in enumerate(line):
                 # not utilizado pois na massa de dados utilizada
                 # nao possuem valores nulos
                 if item is not None: 
                     if str(index) in null_qtty:
-                        null_qtty[str(index)].append(idx)
+                        null_qtty[str(index)].append(row_number)
                     else:
-                        null_qtty[str(index)] = [idx]
+                        null_qtty[str(index)] = [row_number]
             line_qtty += 1
-
-        print(null_qtty)
         for index in null_qtty:
             # se a quantidades de itens nulos for maior
             # que 1/3 da quantidade de linhas, então

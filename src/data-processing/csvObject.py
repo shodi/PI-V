@@ -9,7 +9,7 @@ class CSVObject:
     def process_line(self, line):
         self.data.push(line)
     def remove_null_columns(self, lines):
-        null_qtty = {}
+        null_qtty = {} # por coluna
         line_qtty = 0
         for line in lines:
             for index, item in enumerate(line):
@@ -17,7 +17,7 @@ class CSVObject:
                     if str(index) in null_qtty:
                         null_qtty[str(index)] += 1
                     else:
-                         null_qtty[str(index)] = 0
+                        null_qtty[str(index)] = 0
             line_qtty += 1
         for index in null_qtty:
             # se a quantidades de itens nulos for maior 

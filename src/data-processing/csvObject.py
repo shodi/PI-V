@@ -4,7 +4,6 @@ class CSVObject:
     def __init__(self):
         headers = []
         data = []
-
     def set_headers(self, headers):
         self.headers = headers
     def process_line(self, line):
@@ -20,4 +19,9 @@ class CSVObject:
                     else:
                          null_qtty[str(index)] = 0
             line_qtty += 1
-        
+        for index in null_qtty:
+            # se a quantidades de itens nulos for maior 
+            # que 1/3 da quantidade de linhas, então
+            # a coluna deve ser retirada.
+            if null_qtty[index] >= line_qtty / 3:
+                pass

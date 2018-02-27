@@ -6,10 +6,10 @@ from csvObject import CSVObject
 
 
 def main(file_name, have_headers=False):
-    with open('./../../resources/{}'.format(file_name)) as csv_file:
+    with open('./../../resources/%s' %(file_name)) as csv_file:
         lines = csv.reader(csv_file, delimiter=';')
-        CSVObject.remove_null_columns(lines)
-
+        CSVObject.set_data(lines)
+        CSVObject.remove_null_columns()
 
 if __name__ == '__main__':
     if len(sys.argv):

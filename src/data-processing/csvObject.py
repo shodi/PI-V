@@ -16,8 +16,6 @@ class CSVObject:
         line_qtty = 0
         for row_number, line in enumerate(self.data):
             for index, item in enumerate(line):
-                # not utilizado pois na massa de dados utilizada
-                # nao possuem valores nulos
                 if item is None: 
                     if str(index) in null_qtty:
                         null_qtty[str(index)].append(row_number)

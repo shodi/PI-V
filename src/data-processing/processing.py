@@ -5,7 +5,7 @@ import csv
 from csvObject import CSVObject
 
 
-def main(file_name, have_headers=False):
+def main(file_name, headers=False):
     with open('./../../resources/%s' %(file_name)) as csv_file:
         lines = csv.reader(csv_file, delimiter=';')
         CSVObject.set_data(lines)

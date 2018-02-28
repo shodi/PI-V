@@ -10,7 +10,6 @@ def init_process(file_name, headers=False):
         csv_obj = CSVObject(headers) 
         csv_obj.set_data(lines)
         csv_obj.remove_null_columns()
-        csv_obj.remove_outliers()
 
 if __name__ == '__main__':
     if len(sys.argv):

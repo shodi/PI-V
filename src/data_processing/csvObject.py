@@ -14,6 +14,7 @@ class CSVObject:
 
     def remove_null_columns(self):
         null_qtty = {}  # por coluna
+        self.all_values = {}
         line_qtty = 0
         for row_number, line in enumerate(self.data):
             if self.do_have_headers and row_number == 0:
@@ -25,6 +26,8 @@ class CSVObject:
                     else:
                         null_qtty[str(index)] = [row_number]
                     continue
+                else:
+                    self.all_values[str(index)] = [row_number]
                 if 'sum_{}'.format(str(index)) in self.statistic:
                     self.statistic['sum_%s' % str(index)] += float(item)
                 else:
@@ -49,19 +52,19 @@ class CSVObject:
         pass
 
     def remove_outliers(self):
-        N = [6, 7, 15, 36, 39, 40, 41, 42, 43, 47, 200]
-        average = sum(N) / len(N)
-        q1 = N[round(0.25 * (len(N) + 1))]
-        # q2 = (N[int(len(N) / 2)] + N[int(len(N) / 2 - 1)]) / 2
-        # if len(N) % 2 == 0 else N[int(len(N) /2)]
-        q3 = N[round(0.75 * (len(N) + 1))]
-        IQR = q3 - q1
-        up_limit = average + IQR * 1.5
-        down_limit = average - IQR * 1.5
-
-        for value in N:
+        for key, value in sorted(self.all_values):
+            average = sum(self.all_values[key]) / len(self.all_values[key])
+            q1 = self.all_values[key][round(0.25 * (len(self.all_values) + 1))]
+            # q2 = (N[int(len(N) / 2)] + N[int(len(N) / 2 - 1)]) / 2
+            # if len(N) % 2 == 0 else N[int(len(N) /2)]
+            q3 = self.all_values[key][round(0.75 * (len(self.all_values) + 1))]
+            IQR = q3 - q1
+            up_limit = average + IQR * 1.5
+            down_limit = average - IQR * 1.5
+            print(down_limit)
+        '''for key, value in sorted(self.all_values):
             if value <= down_limit or value >= up_limit:
-                N.remove(value)
+                N.remove(value)'''
 
 # TODO: Implementar método que retira registros que ainda 
 # possuem dados nulos de colunas que não foram retiradas no método 

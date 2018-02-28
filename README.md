@@ -2,7 +2,7 @@
 PI machine learning
 
 Para que você possa executar o programa corretamente é necessário que você possua os seguintes pré requisitos:
-    - Python
+  * Python3 (Versões anteriores podem ocasionar erro de importação de submódulos)
 
 ### Como executar
 para processar os dados contidos nas planilhas (resources/spreadsheets/*)

@@ -20,7 +20,7 @@ class CSVObject:
             if self.do_have_headers and row_number == 0:
                 continue
             for index, item in enumerate(line):
-                if item is None:
+                if item is None or item == '':
                     if str(index) in null_qtty:
                         null_qtty[str(index)].append(row_number)
                     else:

@@ -24,10 +24,10 @@ class CSVObject:
                     else:
                         null_qtty[str(index)] = [row_number]
                     continue
-                if self.statistic.has_key('total_%s' % str(index)):
-                    self.statistic['total_%s' % str(index)] += float(item)
+                if self.statistic.has_key('sum_%s' % str(index)):
+                    self.statistic['sum_%s' % str(index)] += float(item)
                 else:
-                    self.statistic['total_%s' % str(index)] = float(item)
+                    self.statistic['sum_%s' % str(index)] = float(item)
             line_qtty += 1
         self.statistic['total_rows'] = line_qtty
         sorted_arr = [int(index) for index in list(null_qtty)]
@@ -38,7 +38,7 @@ class CSVObject:
             if len(null_qtty[str(index)]) >= line_qtty / 3:
                 for line in self.data:
                     del line[index]
-                    del self.statistic['total_%s' % str(index)]
+                    del self.statistic['sum_%s' % str(index)]
         self.calculate_statistics()
     def calculate_statistics(self):
         # TODO: Com base nos dados obtidos pelo método remove_null_columns

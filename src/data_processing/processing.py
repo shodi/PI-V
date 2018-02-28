@@ -2,7 +2,7 @@
 
 import sys
 import csv
-from csvObject import CSVObject
+from .csvObject import CSVObject
 
 def init_process(file_name, headers=False):
     with open('./resources/spreadsheets/%s' %(file_name)) as csv_file:

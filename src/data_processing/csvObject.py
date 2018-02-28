@@ -39,7 +39,8 @@ class CSVObject:
             if len(null_qtty[str(index)]) >= line_qtty / 3:
                 for line in self.data:
                     del line[index]
-                    del self.statistic['sum_%s' % str(index)]
+                    if self.statistic.has_key('sum_%s' % str(index)):
+                        del self.statistic['sum_%s' % str(index)]
         self.calculate_statistics()
 
     def calculate_statistics(self):

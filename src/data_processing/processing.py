@@ -1,15 +1,13 @@
 #!/usr/bin/python
 
 import sys
-import csv
 from .csvObject import CSVObject
 
+
 def init_process(file_name, headers=False):
-    with open('./resources/spreadsheets/%s' %(file_name)) as csv_file:
-        lines = csv.reader(csv_file, delimiter=';')
-        csv_obj = CSVObject(headers) 
-        csv_obj.set_data(lines)
-        csv_obj.remove_null_columns()
+    csv_obj = CSVObject(headers, file_name)
+    csv_obj.remove_null_columns()
+    csv_obj.remove_outliers()
 
 if __name__ == '__main__':
     if len(sys.argv):

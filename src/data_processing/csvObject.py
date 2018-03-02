@@ -39,11 +39,12 @@ class CSVObject:
         quantidade de linhas, então a coluna deve ser retirada.
 
         Atributos:
-            null_qtty(dict): Estrutura onde chave armazenadaé o número da
+            null_qtty(dict): Estrutura onde chave é armazenada o número da
                 coluna e o valor uma lista com o número das linhas que contém
                 valores nulos.
             line_qtty(int): Quantidade total de linhas com valores.
-            self.statistic(dict):
+            categorization(array<dict>): cada indice representa uma coluna. 
+                Cada coluna terá a categorização de seus dados não numéricos.
 
         Args:
 
@@ -53,9 +54,14 @@ class CSVObject:
         """
         null_qtty = {}  # por coluna
         line_qtty = 0
+        categorization = None
         for row_number, line in enumerate(self.data):
-            if self.do_have_headers and row_number == 0:
-                continue
+            if row_number == 0:
+                # inicializa array. A quantidade de elementos
+                # indica a quantidade de colunas que essa tabela possui
+                categorization = [None] * len(self.data[0])
+                if self.do_have_headers:
+                    continue
             for index, item in enumerate(line):
                 if item is None or item == '':
                     if str(index) in null_qtty:
@@ -63,10 +69,15 @@ class CSVObject:
                     else:
                         null_qtty[str(index)] = [row_number]
                     continue
-                if 'sum_{}'.format(str(index)) in self.statistic:
-                    self.statistic['sum_%s' % str(index)] += float(item)
-                else:
-                    self.statistic['sum_%s' % str(index)] = float(item)
+                try:
+                    # Tenta transformar o dado em float, caso o dado não for
+                    # algo numérico, deverá ser categorizado
+                    if 'sum_{}'.format(str(index)) in self.statistic:
+                        self.statistic['sum_%s' % str(index)] += float(item)
+                    else:
+                        self.statistic['sum_%s' % str(index)] = float(item)
+                except:
+                    self._set_categorization(item, categorization[index])
             line_qtty += 1
         self.statistic['total_rows'] = line_qtty
         sorted_arr = [int(index) for index in list(null_qtty)]
@@ -80,6 +91,16 @@ class CSVObject:
             if '' in subarray:
                 self.data.remove(subarray)
         # self.calculate_statistics()
+
+    counter = 0
+    def _set_categorization(self, item, obj):
+        "Método para categorizar um item não numérico"
+        if obj is None:
+            obj = {}
+        if item not in obj:
+            obj[item] = self.counter
+            self.counter += 1
+        return obj[item]
 
     def calculate_statistics(self):
         """Método para calcular as estatisticas

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import csv
 
-
 class CSVObject:
     def __init__(self, do_have_headers, file_name):
         self.data = []
@@ -111,8 +110,7 @@ class CSVObject:
         for key in pre_data:
             aux = sorted(pre_data[key][:])
             pos_data[key] = {}
-            pos_data[key]['average'] = sum(aux) / (
-                len(aux))
+            pos_data[key]['average'] = fortran.average(aux, len(aux))
             k_q1 = (len(aux) - 1) / 4
             int_part_q1 = int(k_q1 - (k_q1 - int(k_q1)))
             float_part_q1 = k_q1 - int(k_q1)
@@ -136,3 +134,5 @@ class CSVObject:
 # TODO: Implementar método que retira registros que ainda
 # possuem dados nulos de colunas que não foram retiradas no método
 # remove_null_columns
+if __name__ != '__main__':
+    import fortran

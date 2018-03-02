@@ -14,6 +14,7 @@ if __name__=='__main__':
         "f2py", "-c", "-m", "fortran", 
         "./src/fortran_routines/average.f90", "--quiet"
     ]) == 0:
+        subprocess.call(["mv", "./fortran.so", "./src/data_processing"])
         print('{}Success: Fortran compiled successfully\n{}'.format(bcolors.SUCCESS, bcolors.END))
         files = [
             { 'name': 'teste.csv', 'headers': True }

@@ -96,7 +96,8 @@ class CSVObject:
 
     def remove_outliers(self):
         pre_data = {}
-        self.data = [['A'], ['6', '7', '15', '36', '39', '40', '41', '42', '43', '47', '49']]
+        # self.data = [['A'], ['6'], ['7'], ['15'], ['36'], ['39'], ['40'], ['41'], ['42'], ['43'], ['47'], ['49']]
+        # self.data = [['A'], ['501'], ['504'], ['493'], ['499'], ['497'], ['503'], ['525'], ['495'], ['506'], ['502']]
         for row_number, line in enumerate(self.data):
             if self.do_have_headers and row_number == 0:
                 continue
@@ -108,25 +109,30 @@ class CSVObject:
                 continue
         pos_data = {}
         for key in pre_data:
-            import pdb; pdb.set_trace()
+            aux = sorted(pre_data[key][:])
             pos_data[key] = {}
-            pos_data[key]['average'] = sum(pre_data[key]) / len(pre_data[key])
-            pos_data[key]['q1'] = pre_data[key][
-                round(0.25 * (len(pre_data) + 1))]
-                # q2 = (N[int(len(N) / 2)] + N[int(len(N) / 2 - 1)]) / 2
+            pos_data[key]['average'] = sum(aux) / (
+                len(aux))
+            k_q1 = (len(aux) - 1) / 4
+            int_part_q1 = int(k_q1 - (k_q1 - int(k_q1)))
+            float_part_q1 = k_q1 - int(k_q1)
+            pos_data[key]['q1'] = aux[int_part_q1] + (
+                float_part_q1 * (aux[int_part_q1] - aux[int_part_q1 + 1]))
+            # q2 = (N[int(len(N) / 2)] + N[int(len(N) / 2 - 1)]) / 2
             # if len(N) % 2 == 0 else N[int(len(N) /2)]
-            pos_data[key]['q3'] = pre_data[key][
-                round(0.75 * (len(pre_data) + 1))]
+            k_q3 = 3 * (len(aux) - 1) / 4
+            int_part_q3 = int(k_q3 - (k_q3 - int(k_q3)))
+            float_part_q3 = k_q3 - int(k_q3)
+            pos_data[key]['q3'] = aux[int_part_q3] + (
+                float_part_q3 * (aux[int_part_q3] - aux[int_part_q3 + 1]))
             pos_data[key]['IQR'] = pos_data[key]['q3'] - pos_data[key]['q1']
-            pos_data[key]['up_limit'] = pos_data[key]['average'] + \
-                pos_data[key]['IQR'] * 1.5
-            pos_data[key]['down_limit'] = pos_data[key]['average'] - \
-                pos_data[key]['IQR'] * 1.5
-        '''
-        for key, value in self.all_values:
-            if value <= down_limit or value >= up_limit:
-                N.remove(value)'''
-
+            pos_data[key]['up_limit'] = pos_data[key]['average'] + 1.5 * \
+                pos_data[key]['IQR']
+            pos_data[key]['down_limit'] = pos_data[key]['average'] - 1.5 * \
+                pos_data[key]['IQR']
+        # coloca isso para testar direto no terminal
+        # import pdb; pdb.set_trace()
+        
 # TODO: Implementar método que retira registros que ainda
 # possuem dados nulos de colunas que não foram retiradas no método
 # remove_null_columns

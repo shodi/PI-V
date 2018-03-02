@@ -109,16 +109,17 @@ class CSVObject:
         pos_data = {}
         for key in pre_data:
             aux = sorted(pre_data[key][:])
+            length = len(aux)
             pos_data[key] = {}
-            pos_data[key]['average'] = fortran.average(aux, len(aux))
-            k_q1 = (len(aux) - 1) / 4
+            pos_data[key]['average'] = fortran.average(aux, length)
+            k_q1 = (length - 1) / 4
             int_part_q1 = int(k_q1 - (k_q1 - int(k_q1)))
             float_part_q1 = k_q1 - int(k_q1)
             pos_data[key]['q1'] = aux[int_part_q1] + (
                 float_part_q1 * (aux[int_part_q1] - aux[int_part_q1 + 1]))
             # q2 = (N[int(len(N) / 2)] + N[int(len(N) / 2 - 1)]) / 2
             # if len(N) % 2 == 0 else N[int(len(N) /2)]
-            k_q3 = 3 * (len(aux) - 1) / 4
+            k_q3 = 3 * (length - 1) / 4
             int_part_q3 = int(k_q3 - (k_q3 - int(k_q3)))
             float_part_q3 = k_q3 - int(k_q3)
             pos_data[key]['q3'] = aux[int_part_q3] + (

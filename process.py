@@ -10,12 +10,10 @@ class bcolors:
 if __name__=='__main__':
     from src.data_processing.processing import init_process
     if subprocess.call([
-        "f2py", "-c", "-m", "averageF", 
+        "f2py", "-c", "-m", "fortran", 
         "./src/fortran_routines/average.f90", "--quiet"
     ]) == 0:
-        import averageF
         print(bcolors.SUCCESS + 'Success: Fortran compiled successfully\n')
-        print(averageF.average([5,5,5,5], 4))
         files = [
             { 'name': 'teste.csv', 'headers': True }
             # { 'name': 'winequality-red.csv', 'headers': True },

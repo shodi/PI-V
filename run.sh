@@ -2,4 +2,4 @@
 
 f2py -c -m fortran ./src/fortran_routines/average.f90 --quiet
 mv $(ls | grep fortran | grep .so) ./src/data_processing/fortran.so
-python process.py
+python2.7 process.py

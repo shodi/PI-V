@@ -9,6 +9,7 @@ class CSVObject:
         self.statistic = {}
         self.do_have_headers = do_have_headers
         self.set_data(file_name)
+        self.categorization = None
 
     def set_data(self, file_name):
         """Método de leitura e armazenamento do arquivo a ser processado
@@ -54,12 +55,11 @@ class CSVObject:
         """
         null_qtty = {}  # por coluna
         line_qtty = 0
-        categorization = None
         for row_number, line in enumerate(self.data):
             if row_number == 0:
                 # inicializa array. A quantidade de elementos
                 # indica a quantidade de colunas que essa tabela possui
-                categorization = [None] * len(self.data[0])
+                self.categorization = [None] * len(self.data[0])
                 if self.do_have_headers:
                     continue
             for index, item in enumerate(line):
@@ -72,9 +72,10 @@ class CSVObject:
                 # Tenta transformar o dado em float, caso o dado não for
                 # algo numérico, deverá ser categorizado
                 if 'sum_{}'.format(str(index)) in self.statistic:
-                    self.statistic['sum_%s' % str(index)] += float(item)
+                    value = self._get_item_value(item, index)
+                    self.statistic['sum_%s' % str(index)] += value
                 else:
-                    self.statistic['sum_%s' % str(index)] = self._get_item_value(item, categorization)
+                    self.statistic['sum_%s' % str(index)] = self._get_item_value(item, index)
             line_qtty += 1
         self.statistic['total_rows'] = line_qtty
         sorted_arr = [int(index) for index in list(null_qtty)]
@@ -90,23 +91,27 @@ class CSVObject:
         # self.calculate_statistics()
 
     counter = 0
-    def _get_item_value(self, item, obj):
+    def _get_item_value(self, item, idx):
         """
             Método para retornar o valor numerico ou caso não seja um número
             retornar categorizar um item não numérico
+
+            Atributos:
+                item(float || string): valor a ser analizado e 
+                    categorizado, caso necessário.
+                categorization(Array<{[x: string]: int}>): array com cada indice representando 
+                    uma coluna da planilha
+                idx(int): indice do arr_obj correspondente a coluna que está sendo analizada.
         """
-        value = None
         try:
-            value = float(item)
-        except:
-            if obj is None:
-                obj = {}
-            if item not in obj:
-                obj[item] = self.counter
+            return float(item)
+        except Exception:
+            if self.categorization[idx] is None:
+                self.categorization[idx] = {}
+            if item not in self.categorization[idx]:
+                self.categorization[idx][item] = self.counter
                 self.counter += 1
-            value = obj[item]
-        finally:
-            return value
+            return self.categorization[idx][item]
 
     def calculate_statistics(self):
         """Método para calcular as estatisticas
@@ -128,11 +133,14 @@ class CSVObject:
             if self.do_have_headers and row_number == 0:
                 continue
             for index, item in enumerate(line):
-                if str(index) in pre_data:
-                        pre_data[str(index)].append(float(item))
+                if self.categorization[index] is not None:
+                    continue
+                str_idx = str(index)
+                float_item = float(item)
+                if str_idx in pre_data:
+                    pre_data[str_idx].append(float_item)
                 else:
-                    pre_data[str(index)] = [float(item)]
-                continue
+                    pre_data[str_idx] = [float_item]
         pos_data = {}
         for key in pre_data:
             aux = sorted(pre_data[key][:])

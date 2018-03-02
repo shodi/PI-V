@@ -10,7 +10,6 @@ class bcolors:
 
 if __name__=='__main__':
     from src.data_processing.processing import init_process
-    print('{}Success: Fortran compiled successfully\n{}'.format(bcolors.SUCCESS, bcolors.END))
     files = [
         { 'name': 'iris.csv', 'headers': False }
         # { 'name': 'winequality-red.csv', 'headers': True },

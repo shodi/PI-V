@@ -69,15 +69,12 @@ class CSVObject:
                     else:
                         null_qtty[str(index)] = [row_number]
                     continue
-                try:
-                    # Tenta transformar o dado em float, caso o dado não for
-                    # algo numérico, deverá ser categorizado
-                    if 'sum_{}'.format(str(index)) in self.statistic:
-                        self.statistic['sum_%s' % str(index)] += float(item)
-                    else:
-                        self.statistic['sum_%s' % str(index)] = float(item)
-                except:
-                    self._set_categorization(item, categorization[index])
+                # Tenta transformar o dado em float, caso o dado não for
+                # algo numérico, deverá ser categorizado
+                if 'sum_{}'.format(str(index)) in self.statistic:
+                    self.statistic['sum_%s' % str(index)] += float(item)
+                else:
+                    self.statistic['sum_%s' % str(index)] = self._get_item_value(item, categorization)
             line_qtty += 1
         self.statistic['total_rows'] = line_qtty
         sorted_arr = [int(index) for index in list(null_qtty)]
@@ -93,14 +90,23 @@ class CSVObject:
         # self.calculate_statistics()
 
     counter = 0
-    def _set_categorization(self, item, obj):
-        "Método para categorizar um item não numérico"
-        if obj is None:
-            obj = {}
-        if item not in obj:
-            obj[item] = self.counter
-            self.counter += 1
-        return obj[item]
+    def _get_item_value(self, item, obj):
+        """
+            Método para retornar o valor numerico ou caso não seja um número
+            retornar categorizar um item não numérico
+        """
+        value = None
+        try:
+            value = float(item)
+        except:
+            if obj is None:
+                obj = {}
+            if item not in obj:
+                obj[item] = self.counter
+                self.counter += 1
+            value = obj[item]
+        finally:
+            return value
 
     def calculate_statistics(self):
         """Método para calcular as estatisticas
@@ -132,7 +138,8 @@ class CSVObject:
             aux = sorted(pre_data[key][:])
             length = len(aux)
             pos_data[key] = {}
-            pos_data[key]['average'] = fortran.average(aux, length)
+            # pos_data[key]['average'] = fortran.average(aux, length)
+            pos_data[key]['average'] = sum(aux) / length
             k_q1 = (length - 1) / 4
             int_part_q1 = int(k_q1 - (k_q1 - int(k_q1)))
             float_part_q1 = k_q1 - int(k_q1)
@@ -156,5 +163,5 @@ class CSVObject:
 # TODO: Implementar método que retira registros que ainda
 # possuem dados nulos de colunas que não foram retiradas no método
 # remove_null_columns
-if __name__ != '__main__':
-    import fortran
+# if __name__ != '__main__':
+#     import fortran

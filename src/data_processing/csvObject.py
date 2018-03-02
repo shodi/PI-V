@@ -140,7 +140,7 @@ class CSVObject:
                 if str_idx in pre_data:
                     pre_data[str_idx].append(float_item)
                 else:
-                    pre_data[str_idx] = [float_item]
+                    pre_data[str_idx] = [float_item] 
         pos_data = {}
         for key in pre_data:
             aux = sorted(pre_data[key][:])
@@ -165,6 +165,13 @@ class CSVObject:
                 pos_data[key]['IQR']
             pos_data[key]['down_limit'] = pos_data[key]['average'] - 1.5 * \
                 pos_data[key]['IQR']
+            for item in aux:
+                if item < pos_data[key]['down_limit']:
+                    aux.remove(item)
+                if item > pos_data[key]['up_limit']:
+                    aux.remove(item)
+            print (len(aux))
+
         # coloca isso para testar direto no terminal
         # import pdb; pdb.set_trace()
         

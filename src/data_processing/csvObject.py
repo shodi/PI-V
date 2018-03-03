@@ -168,7 +168,7 @@ class CSVObject:
                     processada.
                 path(string): Caminho para o local onde será armazenado tal arquivo.
         """
-        with open('%s/%s' % (path, result_file_name), mode="a") as result_csv:
+        with open('%s/%s' % (path, result_file_name), mode="w+") as result_csv:
             for item in self.data:
                 line = ';'.join(item)
                 result_csv.writelines('%s\n' % line)

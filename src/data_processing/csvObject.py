@@ -159,7 +159,7 @@ class CSVObject:
                     aux.remove(item)
             print(aux)
 
-    def generate_result(self, result_file_name, path="./resources/results"):
+    def generate_result(self, result_file_name, path="./resources/spreadsheets"):
         """
             Método para gerar o resultado do csv processado
             

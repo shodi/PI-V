@@ -5,7 +5,6 @@ import csv
 class CSVObject:
     def __init__(self, do_have_headers, file_name):
         self.data = []
-        self.headers = []
         self.statistic = {}
         self.do_have_headers = do_have_headers
         self.set_data(file_name)
@@ -113,18 +112,6 @@ class CSVObject:
                 self.counter += 1
             return self.categorization[idx][item]
 
-    def calculate_statistics(self):
-        """Método para calcular as estatisticas
-
-        Todo: Com base nos dados obtidos pelo método
-        remove_null_columns podemos calcular valores como a média, desvio
-        padrão e a variância.
-
-        Tal atividade deverá ser implementada no método na qual este
-        comentário reside.
-        """
-        pass
-
     def remove_outliers(self):
         pre_data = {}
         # self.data = [['A'], ['6'], ['7'], ['15'], ['36'], ['39'], ['40'], ['41'], ['42'], ['43'], ['47'], ['49']]
@@ -170,8 +157,21 @@ class CSVObject:
                     aux.remove(item)
                 if item > pos_data[key]['up_limit']:
                     aux.remove(item)
-            print (len(aux))
+            print(aux)
 
+    def generate_result(self, result_file_name, path="./resources/results"):
+        """
+            Método para gerar o resultado do csv processado
+            
+            Atributos:
+                result_file_name(string): Nome do arquivo que será armazenada a informação
+                    processada.
+                path(string): Caminho para o local onde será armazenado tal arquivo.
+        """
+        with open('%s/%s' % (path, result_file_name), mode="a") as result_csv:
+            for item in self.data:
+                line = ';'.join(item)
+                result_csv.writelines('%s\n' % line)
         # coloca isso para testar direto no terminal
         # import pdb; pdb.set_trace()
         

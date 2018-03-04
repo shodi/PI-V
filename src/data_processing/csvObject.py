@@ -120,7 +120,6 @@ class CSVObject:
         max_and_min_by_row = {}
         for line_number, line in enumerate(self.data):
             for index, item in enumerate(line):
-                # import pdb; pdb.set_trace()
                 self.data[line_number][index] = self._get_item_value(
                     item, index)
                 if index not in max_and_min_by_row:

@@ -93,6 +93,8 @@ class CSVObject:
 
     counter = 0
 
+
+
     def _get_item_value(self, item, idx):
         """
             Método para retornar o valor numerico ou caso não seja um número
@@ -116,6 +118,15 @@ class CSVObject:
                 self.counter += 1
             return self.categorization[idx][item]
 
+    def data_normalization(self):
+        for line_number, line in enumerate(self.data):
+            for index, item in enumerate(line):
+                # import pdb; pdb.set_trace()
+                self.data[line_number][index] = self._get_item_value(item, index)
+                # (item - menor_item)/(maior_item - menor_item )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                # criar dict(c-ave, valor)
+                # transforma lin-a por coluna
+
     def remove_outliers(self):
         pre_data = {}
         for row_number, line in enumerate(self.data):
@@ -125,7 +136,7 @@ class CSVObject:
                 if self.categorization[index] is not None:
                     continue
                 str_idx = str(index)
-                float_item = float(item)
+                float_item = float(item)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
                 if str_idx in pre_data:
                     pre_data[str_idx].append(float_item)
                 else:
@@ -173,8 +184,9 @@ class CSVObject:
         """
         with open('%s/%s' % (path, result_file_name), mode="w+") as result_csv:
             for item in self.data:
-                line = ';'.join(item)
+                line = ';'.join(map(str, item))
                 result_csv.writelines('%s\n' % line)
+            print('Arquivo gerado')
         # coloca isso para testar direto no terminal
         # import pdb; pdb.set_trace()
 

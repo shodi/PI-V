@@ -6,6 +6,7 @@ bin/
 src/results
 *.xls
 *.csv
+*.pdf
 
 # C extensions
 *.so

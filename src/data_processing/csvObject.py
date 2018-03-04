@@ -112,7 +112,7 @@ class CSVObject:
             if self.categorization[idx] is None:
                 self.categorization[idx] = {}
             if item not in self.categorization[idx]:
-                self.categorization[idx][item] = self.counter
+                self.categorization[idx][item] = float(self.counter)
                 self.counter += 1
             return self.categorization[idx][item]
 

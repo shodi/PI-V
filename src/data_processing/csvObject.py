@@ -93,8 +93,6 @@ class CSVObject:
 
     counter = 0
 
-
-
     def _get_item_value(self, item, idx):
         """
             Método para retornar o valor numerico ou caso não seja um número
@@ -119,13 +117,33 @@ class CSVObject:
             return self.categorization[idx][item]
 
     def data_normalization(self):
+        max_and_min_by_row = {}
         for line_number, line in enumerate(self.data):
             for index, item in enumerate(line):
                 # import pdb; pdb.set_trace()
-                self.data[line_number][index] = self._get_item_value(item, index)
-                # (item - menor_item)/(maior_item - menor_item )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                # criar dict(c-ave, valor)
-                # transforma lin-a por coluna
+                self.data[line_number][index] = self._get_item_value(
+                    item, index)
+                if index not in max_and_min_by_row:
+                    max_and_min_by_row[index] = [self.data[line_number][index],
+                                                 self.data[line_number][index]]
+
+                if max_and_min_by_row[index]:
+                    if self.data[line_number][index] > \
+                            max_and_min_by_row[index][0]:
+                        max_and_min_by_row[index][0] = \
+                            self.data[line_number][index]
+
+                    elif self.data[line_number][index] < \
+                            max_and_min_by_row[index][1]:
+                        max_and_min_by_row[index][1] = \
+                            self.data[line_number][index]
+        for line_number, line in enumerate(self.data):
+            for index, item in enumerate(line):
+                self.data[line_number][index] = (
+                    (item - max_and_min_by_row[index][1]) /
+                    (max_and_min_by_row[index][0] -
+                     max_and_min_by_row[index][1]))
+        # (item - menor_item)/(maior_item - menor_item )
 
     def remove_outliers(self):
         pre_data = {}
@@ -136,7 +154,7 @@ class CSVObject:
                 if self.categorization[index] is not None:
                     continue
                 str_idx = str(index)
-                float_item = float(item)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                float_item = float(item)
                 if str_idx in pre_data:
                     pre_data[str_idx].append(float_item)
                 else:
@@ -172,7 +190,9 @@ class CSVObject:
                     aux.remove(item)
             print(aux)
 
-    def generate_result(self, result_file_name, path="./resources/spreadsheets"):
+    def generate_result(self,
+                        result_file_name,
+                        path="./resources/spreadsheets"):
         """
             Método para gerar o resultado do csv processado
 

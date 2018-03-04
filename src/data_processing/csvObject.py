@@ -208,7 +208,6 @@ class CSVObject:
             for item in self.data:
                 line = ';'.join(map(str, item))
                 result_csv.writelines('%s\n' % line)
-            print('Arquivo gerado')
         # coloca isso para testar direto no terminal
         # import pdb; pdb.set_trace()
 

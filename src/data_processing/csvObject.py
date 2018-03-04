@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import csv
-
+import os
 
 class CSVObject:
     def __init__(self, do_have_headers, file_name):
@@ -191,7 +191,7 @@ class CSVObject:
 
     def generate_result(self,
                         result_file_name,
-                        path="./resources/spreadsheets"):
+                        path="./resources/spreadsheets/result"):
         """
             Método para gerar o resultado do csv processado
 
@@ -201,7 +201,10 @@ class CSVObject:
                 path(string): Caminho para o local onde será armazenado
                     tal arquivo.
         """
-        with open('%s/%s' % (path, result_file_name), mode="w+") as result_csv:
+        file_path = '%s/%s' %(path, result_file_name) 
+        if not os.path.exists(os.path.dirname(file_path)):
+            os.makedirs(os.path.dirname(file_path))
+        with open(file_path, mode="w+") as result_csv:
             for item in self.data:
                 line = ';'.join(map(str, item))
                 result_csv.writelines('%s\n' % line)

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import csv
 
+
 class CSVObject:
     def __init__(self, do_have_headers, file_name):
         self.data = []
@@ -43,7 +44,7 @@ class CSVObject:
                 coluna e o valor uma lista com o número das linhas que contém
                 valores nulos.
             line_qtty(int): Quantidade total de linhas com valores.
-            categorization(array<dict>): cada indice representa uma coluna. 
+            categorization(array<dict>): cada indice representa uma coluna.
                 Cada coluna terá a categorização de seus dados não numéricos.
 
         Args:
@@ -74,7 +75,8 @@ class CSVObject:
                     value = self._get_item_value(item, index)
                     self.statistic['sum_%s' % str(index)] += value
                 else:
-                    self.statistic['sum_%s' % str(index)] = self._get_item_value(item, index)
+                    self.statistic['sum_%s' % str(index)] = self. \
+                        _get_item_value(item, index)
             line_qtty += 1
         self.statistic['total_rows'] = line_qtty
         sorted_arr = [int(index) for index in list(null_qtty)]
@@ -90,17 +92,19 @@ class CSVObject:
         # self.calculate_statistics()
 
     counter = 0
+
     def _get_item_value(self, item, idx):
         """
             Método para retornar o valor numerico ou caso não seja um número
             retornar categorizar um item não numérico
 
             Atributos:
-                item(float || string): valor a ser analizado e 
+                item(float || string): valor a ser analizado e
                     categorizado, caso necessário.
-                categorization(Array<{[x: string]: int}>): array com cada indice representando 
-                    uma coluna da planilha
-                idx(int): indice do arr_obj correspondente a coluna que está sendo analizada.
+                categorization(Array<{[x: string]: int}>): array com cada
+                    indice representando uma coluna da planilha
+                idx(int): indice do arr_obj correspondente a coluna que está
+                    sendo analizada.
         """
         try:
             return float(item)
@@ -114,8 +118,6 @@ class CSVObject:
 
     def remove_outliers(self):
         pre_data = {}
-        # self.data = [['A'], ['6'], ['7'], ['15'], ['36'], ['39'], ['40'], ['41'], ['42'], ['43'], ['47'], ['49']]
-        # self.data = [['A'], ['501'], ['504'], ['493'], ['499'], ['497'], ['503'], ['525'], ['495'], ['506'], ['502']]
         for row_number, line in enumerate(self.data):
             if self.do_have_headers and row_number == 0:
                 continue
@@ -127,7 +129,7 @@ class CSVObject:
                 if str_idx in pre_data:
                     pre_data[str_idx].append(float_item)
                 else:
-                    pre_data[str_idx] = [float_item] 
+                    pre_data[str_idx] = [float_item]
         pos_data = {}
         for key in pre_data:
             aux = sorted(pre_data[key][:])
@@ -162,11 +164,12 @@ class CSVObject:
     def generate_result(self, result_file_name, path="./resources/spreadsheets"):
         """
             Método para gerar o resultado do csv processado
-            
+
             Atributos:
-                result_file_name(string): Nome do arquivo que será armazenada a informação
-                    processada.
-                path(string): Caminho para o local onde será armazenado tal arquivo.
+                result_file_name(string): Nome do arquivo que será armazenada a
+                    informação processada.
+                path(string): Caminho para o local onde será armazenado
+                    tal arquivo.
         """
         with open('%s/%s' % (path, result_file_name), mode="w+") as result_csv:
             for item in self.data:
@@ -174,9 +177,9 @@ class CSVObject:
                 result_csv.writelines('%s\n' % line)
         # coloca isso para testar direto no terminal
         # import pdb; pdb.set_trace()
-        
+
 # TODO: Implementar método que retira registros que ainda
 # possuem dados nulos de colunas que não foram retiradas no método
 # remove_null_columns
 # if __name__ != '__main__':
-#     import fortran
+# import fortran

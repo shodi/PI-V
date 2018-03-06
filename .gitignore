@@ -7,6 +7,7 @@ src/results
 *.xls
 *.csv
 *.pdf
+resources/spreadsheets/result/
 
 # C extensions
 *.so

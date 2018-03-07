@@ -11,6 +11,9 @@ class CSVObject:
         self.set_data(file_name)
         self.categorization = None
 
+    def set_null_notation(self, null_notation):
+        self.null_notation = null_notation
+
     def set_data(self, file_name):
         """Método de leitura e armazenamento do arquivo a ser processado
 
@@ -63,7 +66,7 @@ class CSVObject:
                 if self.do_have_headers:
                     continue
             for index, item in enumerate(line):
-                if item is None or item == '':
+                if item.strip() in self.null_notation:
                     if str(index) in null_qtty:
                         null_qtty[str(index)].append(row_number)
                     else:

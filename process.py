@@ -15,14 +15,14 @@ if __name__=='__main__':
         { 'name': 'iris' },
         { 'name': 'winequality-red', 'headers': True },
         { 'name': 'winequality-white', 'headers': True },
-        { 'name': 'adult' },
+        { 'name': 'adult', 'null_notation': ['?', '', None] },
         { 'name': 'breast-cancer' },
         { 'name': 'wine' },
         { 'name': 'abalone' }
     ]
     for i in files:
         start_time = time.time()
-        init_process(i.get('name'), i.get('headers'))
+        init_process(i.get('name'), i.get('headers'), i.get('null_notation'))
         print(bcolors.SUCCESS + \
             '[Success] Arquivo %s_result.csv gerado em %s%lf segundos%s' \
             %(i.get('name'), bcolors.ERROR, time.time() - start_time, bcolors.END))

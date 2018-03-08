@@ -7,6 +7,8 @@ src/results
 *.xls
 *.csv
 *.pdf
+*.sty
+*.bst
 resources/spreadsheets/result/
 
 # C extensions

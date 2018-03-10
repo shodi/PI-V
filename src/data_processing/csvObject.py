@@ -192,6 +192,8 @@ class CSVObject:
                     aux.remove(item)
             print(aux)
 
+
+
     def generate_result(self,
                         result_file_name,
                         path="./resources/spreadsheets/result"):

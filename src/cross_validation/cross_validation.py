@@ -63,10 +63,9 @@ class CrossValidation(object):
                 for line in sublist:
                     trainning.append(line)
         knn_obj = KNN(int(sys.argv[1]) if len(sys.argv) > 1 else 3, trainning)
-        import pdb; pdb.set_trace()
-
         knn_obj.find_knn(test[0])
         print(knn_obj.get_prediction())
+        # print(knn_obj.get_prediction())
 
 
 

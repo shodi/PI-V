@@ -1,14 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import csv
+import sys
+sys.path.append('../kNN')
+from knn import KNN
 
 
 class CrossValidation(object):
     def __init__(self, file_name):
         self.data_set = []
-        self.set_data(file_name)
+        self.__set_data(file_name)
 
-    def set_data(self, file_name):
+    def __set_data(self, file_name):
         """Método de leitura e armazenamento do arquivo a ser processado
 
         Este método faz a leitura do arquivo para armazena-lo para que possa
@@ -40,16 +43,31 @@ class CrossValidation(object):
 
         Todo:
         """
-        chunks = {}
+        self.chunks = {}
         row_qtty = sum(1 for row in self.data_set)
         aux = 1
         for index in range(0, row_qtty):
             if aux == k + 1:
                 aux = 1
-            if str(aux) not in chunks:
-                chunks[str(aux)] = []
-            chunks[str(aux)].append(self.data_set[index])
+            if str(aux) not in self.chunks:
+                self.chunks[str(aux)] = []
+            self.chunks[str(aux)].append(self.data_set[index])
             aux += 1
+        test = self.chunks['1']
+        del self.chunks['1']
+        trainning = []
+        for key, sublist in self.chunks.iteritems():
+            if key == 0:
+                continue
+            else:
+                for line in sublist:
+                    trainning.append(line)
+        knn_obj = KNN(int(sys.argv[1]) if len(sys.argv) > 1 else 3, trainning)
+        import pdb; pdb.set_trace()
+
+        knn_obj.find_knn(test[0])
+        print(knn_obj.get_prediction())
+
 
 
 if __name__ == '__main__':

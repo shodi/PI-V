@@ -50,8 +50,6 @@ class CrossValidation(object):
                 chunks[str(aux)] = []
             chunks[str(aux)].append(self.data_set[index])
             aux += 1
-        # 1)Dividir o conjunto de dados em 10 partes
-        # 2)erro amostral é a media dos erros obtidos
 
 
 if __name__ == '__main__':

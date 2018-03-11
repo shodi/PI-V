@@ -81,11 +81,13 @@ class CrossValidation(object):
 
                     test_number[str(index)] += 1
                 aux += 1
+            print(test_fold)
+            print("---------------------------------------------------------------")
         print test_number
 
 
 if __name__ == '__main__':
-    file_name = 'winequality-white_result.csv'
+    file_name = 'iris_result.csv'
     # try:
     cv = CrossValidation(file_name)
     cv.k_fold(10)

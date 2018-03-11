@@ -41,18 +41,16 @@ class CrossValidation(object):
 
         Todo:
         """
-        self.data_set = [[0], [1], [24], [22], [16], [2], [12], [8], [21], [3], [11]]
-        divided_data = {}
-        row_count = sum(1 for row in self.data_set)
-        partition = 0
-        for index, line in enumerate(self.data_set):
-            if index % (row_count / 10) == 0:
-                partition += 1
-                divided_data[str(partition)] = []
-            divided_data[str(partition)].append(line)
-        import pdb; pdb.set_trace()
-            # pass
-        #for row_number, line in enumerate(self.data):
+        chunk = {}
+        row_qtty = sum(1 for row in self.data_set)
+        aux = 1
+        for index in range(0, row_qtty):
+            if aux == k + 1:
+                aux = 1
+            if str(aux) not in chunk:
+                chunk[str(aux)] = []
+            chunk[str(aux)].append(self.data_set[index])
+            aux += 1
         # 1)Dividir o conjunto de dados em 10 partes
         # 2)erro amostral é a media dos erros obtidos
 

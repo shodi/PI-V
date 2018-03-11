@@ -3,6 +3,7 @@
 import csv
 import os
 
+
 class CSVObject:
     def __init__(self, do_have_headers, file_name):
         self.data = []
@@ -191,8 +192,6 @@ class CSVObject:
                 if item > pos_data[key]['up_limit']:
                     aux.remove(item)
             print(aux)
-
-
 
     def generate_result(self,
                         result_file_name,

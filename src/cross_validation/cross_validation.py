@@ -81,7 +81,6 @@ class CrossValidation(object):
 
                     test_number[str(index)] += 1
                 aux += 1
-        import pdb; pdb.set_trace()
         print test_number
 
 

@@ -61,8 +61,7 @@ class CrossValidation(object):
         for index in range(0, row_qtty):
             if aux == k + 1:
                 aux = 1
-            test = self.fold[str(aux)]
-            del self.fold[str(aux)]
+            test_fold = self.fold[str(aux)]
             trainning = []
             for key, sublist in self.fold.iteritems():
                 if key == 0:
@@ -72,13 +71,14 @@ class CrossValidation(object):
                         trainning.append(line)
             knn_obj = KNN(
                 int(sys.argv[1]) if len(sys.argv) > 1 else 3, trainning)
-            knn_obj.find_knn(test[0])
-            test_predict = knn_obj.get_prediction()
-            if test_predict == self.data_set[index][-1]:
-                if aux not in test_number:
-                    test_number[str(aux)] = 0
-                else:
-                    test_number[str(aux)] += 1  
+            for test in test_fold:
+                knn_obj.find_knn(test)
+                test_predict = knn_obj.get_prediction()
+                if test_predict['class'] == float(self.data_set[index][-1]):
+                    if str(aux) not in test_number:
+                        test_number[str(aux)] = 0
+
+                    test_number[str(aux)] += 1
             aux += 1
         import pdb; pdb.set_trace()
         print test_number

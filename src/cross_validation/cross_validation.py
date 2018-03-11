@@ -15,8 +15,7 @@ class CrossValidation(object):
         ser processado pelos demais métodos.
 
         Atributos:
-            self.data(list):
-            self.lines():
+            self.data_set(list):
 
         Args:
             file_name(str): Nome do arquivo a ser lido.
@@ -35,21 +34,21 @@ class CrossValidation(object):
         Atributos:
 
         Args:
-            data_set(array): Dados a serem trabalhados.
+            k(int): Quantidade de sublistas a ser dividido.
 
         Returns:
 
         Todo:
         """
-        chunk = {}
+        chunks = {}
         row_qtty = sum(1 for row in self.data_set)
         aux = 1
         for index in range(0, row_qtty):
             if aux == k + 1:
                 aux = 1
-            if str(aux) not in chunk:
-                chunk[str(aux)] = []
-            chunk[str(aux)].append(self.data_set[index])
+            if str(aux) not in chunks:
+                chunks[str(aux)] = []
+            chunks[str(aux)].append(self.data_set[index])
             aux += 1
         # 1)Dividir o conjunto de dados em 10 partes
         # 2)erro amostral é a media dos erros obtidos

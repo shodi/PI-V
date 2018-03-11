@@ -46,6 +46,7 @@ class CrossValidation(object):
         # dividir o arquivo em pedaços
         self.fold = {}
         row_qtty = sum(1 for row in self.data_set)
+        print row_qtty
         aux = 1
         for index in range(0, row_qtty):
             if aux == k + 1:
@@ -56,12 +57,11 @@ class CrossValidation(object):
             aux += 1
 
         # comparar testes e trainamentos
-        aux = 1
+        aux = 0
         test_number = {}
-        for index in range(0, row_qtty):
-            if aux == k + 1:
-                aux = 1
-            test_fold = self.fold[str(aux)]
+        test_fold = None
+        for index in range(1, 11):
+            test_fold = self.fold[str(index)]
             trainning = []
             for key, sublist in self.fold.iteritems():
                 if key == 0:
@@ -71,21 +71,22 @@ class CrossValidation(object):
                         trainning.append(line)
             knn_obj = KNN(
                 int(sys.argv[1]) if len(sys.argv) > 1 else 3, trainning)
-            for test in test_fold:
+
+            for jndex, test in enumerate(test_fold):
                 knn_obj.find_knn(test)
                 test_predict = knn_obj.get_prediction()
-                if test_predict['class'] == float(self.data_set[index][-1]):
-                    if str(aux) not in test_number:
-                        test_number[str(aux)] = 0
+                if test_predict['class'] == float(test_fold[jndex][-1]):
+                    if str(index) not in test_number:
+                        test_number[str(index)] = 0
 
-                    test_number[str(aux)] += 1
-            aux += 1
+                    test_number[str(index)] += 1
+                aux += 1
         import pdb; pdb.set_trace()
         print test_number
 
 
 if __name__ == '__main__':
-    file_name = 'iris_result.csv'
+    file_name = 'winequality-white_result.csv'
     # try:
     cv = CrossValidation(file_name)
     cv.k_fold(10)

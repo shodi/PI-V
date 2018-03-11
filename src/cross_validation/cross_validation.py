@@ -58,7 +58,7 @@ class CrossValidation(object):
 
         # comparar testes e trainamentos
         aux = 0
-        test_number = {}
+        hits = {}
         test_fold = None
         for index in range(1, 11):
             test_fold = self.fold[str(index)]
@@ -76,14 +76,13 @@ class CrossValidation(object):
                 knn_obj.find_knn(test)
                 test_predict = knn_obj.get_prediction()
                 if test_predict['class'] == float(test_fold[jndex][-1]):
-                    if str(index) not in test_number:
-                        test_number[str(index)] = 0
-
-                    test_number[str(index)] += 1
+                    if str(index) not in hits:
+                        hits[str(index)] = 0
+                    hits[str(index)] += 1
                 aux += 1
             print(test_fold)
             print("---------------------------------------------------------------")
-        print test_number
+        print hits
 
 
 if __name__ == '__main__':

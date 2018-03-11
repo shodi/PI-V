@@ -64,7 +64,7 @@ class CrossValidation(object):
             test_fold = self.fold[str(index)]
             trainning = []
             for key, sublist in self.fold.iteritems():
-                if key == 0:
+                if int(key) == index:
                     continue
                 else:
                     for line in sublist:

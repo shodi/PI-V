@@ -85,10 +85,16 @@ class CrossValidation(object):
                         hits[str(index)] = 0
                     hits[str(index)] += 1
                 aux += 1
-            print(test_fold)
-            print("---------------------------------------------------------------")
+            qtty_test = len(test_fold)
+            qtty_correct = hits[str(index)]
+            # Erro amostral = qnt de erros / pela qnt de instancias de teste
+            erro_amostral = ((qtty_test - qtty_correct)/round(qtty_test,5))
+            # Porcentagem de erro por k-fold
+            print (erro_amostral * 100)
+            # print(test_fold)
+            # print("---------------------------------------------------------------")
         print hits
-    
+
     def __get_neighbour_qtd(self, iter_index, file_lenght, classes_qtd):
         m = classes_qtd + 1 if classes_qtd % 2 == 0 else classes_qtd
         if iter_index == 0:
@@ -105,7 +111,7 @@ class CrossValidation(object):
 
 
 if __name__ == '__main__':
-    files = ['iris_result.csv']
+    files = ['winequality-red_result.csv']
     for file_index, _file in enumerate(files):
         for i in range(4):
             cv = CrossValidation(_file, i)

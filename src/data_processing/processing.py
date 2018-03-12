@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 import sys
-from .csvObject import CSVObject
+from csvObject import CSVObject
 
 
-def init_process(file_name, headers, null_notation):
+def init_process(file_name, headers=None, null_notation=None):
     if null_notation is None:
         null_notation = ['', None]
     if headers is None:
@@ -17,6 +17,6 @@ def init_process(file_name, headers, null_notation):
 
 if __name__ == '__main__':
     if len(sys.argv):
-        init_process('winequality-white')
+        init_process('iris')
     else:
         print('Passe o nome do arquivo a ser processado.')

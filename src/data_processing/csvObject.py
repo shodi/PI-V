@@ -4,6 +4,7 @@ import csv
 import os
 import math
 
+
 class CSVObject:
     def __init__(self, do_have_headers, file_name):
         self.data = []

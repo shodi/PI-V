@@ -11,6 +11,7 @@ class CrossValidation(object):
         self.data_set = []
         self.__set_data(file_name)
         self.iter_count = iter_count
+        self.classes = None
 
     def __set_data(self, file_name):
         """Método de leitura e armazenamento do arquivo a ser processado
@@ -47,7 +48,7 @@ class CrossValidation(object):
         # dividir o arquivo em pedaços
         self.fold = {}
         row_qtty = sum(1 for row in self.data_set)
-        print(row_qtty) # colocando com parentesis pra mantes a compatibilidade com outras versoes do python
+        # print(row_qtty) # colocando com parentesis pra mantes a compatibilidade com outras versoes do python
         aux = 1
         for index in range(0, row_qtty):
             if aux == k + 1:
@@ -65,7 +66,7 @@ class CrossValidation(object):
             test_fold = self.fold[str(index)]
             trainning = []
             file_lenght = 0
-            classes = []
+            self.classes = []
             for key, sublist in self.fold.iteritems():
                 if int(key) == index:
                     continue
@@ -73,9 +74,9 @@ class CrossValidation(object):
                     for line in sublist:
                         trainning.append(line)
                         file_lenght += 1
-                        if line[-1] not in classes:
-                            classes.append(line[-1]) 
-            knn_obj = KNN(self.__get_neighbour_qtd(self.iter_count, file_lenght, len(classes)), trainning)
+                        if line[-1] not in self.classes:
+                            self.classes.append(line[-1]) 
+            knn_obj = KNN(self.__get_neighbour_qtd(self.iter_count, file_lenght), trainning)
 
             for jndex, test in enumerate(test_fold):
                 knn_obj.find_knn(test)
@@ -94,8 +95,9 @@ class CrossValidation(object):
             # print(test_fold)
             # print("---------------------------------------------------------------")
         print hits
-
-    def __get_neighbour_qtd(self, iter_index, file_lenght, classes_qtd):
+    
+    def __get_neighbour_qtd(self, iter_index, file_lenght):
+        classes_qtd = len(self.classes)
         m = classes_qtd + 1 if classes_qtd % 2 == 0 else classes_qtd
         if iter_index == 0:
             return 1
@@ -109,10 +111,27 @@ class CrossValidation(object):
             else:
                 return (file_lenght / 2)
 
+    def __get_confusion_matrix(self):
+        pass
+
+    def __get_multi_level_matrix(self):
+        pass
+
+    def generate_confusion_matrix(self):
+        if len(self.classes) == 2:
+            self.__get_confusion_matrix()
+        else:
+            self.__get_multi_level_matrix()
+
 
 if __name__ == '__main__':
-    files = ['winequality-red_result.csv']
-    for file_index, _file in enumerate(files):
+    # files = [
+    #     'iris', 'abalone', 'wine',
+    #     'adult', 'breast-cancer',
+    #     'winequality-red', 'winequality-white'
+    # ]
+    files = ['wine']
+    for _file in files:
         for i in range(4):
-            cv = CrossValidation(_file, i)
+            cv = CrossValidation('%s_result.csv' % _file, i)
             cv.k_fold(10)

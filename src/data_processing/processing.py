@@ -17,6 +17,6 @@ def init_process(file_name, headers=None, null_notation=None):
 
 if __name__ == '__main__':
     if len(sys.argv):
-        init_process('iris')
+        init_process('adult')
     else:
         print('Passe o nome do arquivo a ser processado.')

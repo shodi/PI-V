@@ -111,12 +111,11 @@ class CrossValidation(object):
             for jndex, test in enumerate(test_fold):
                 knn_obj.find_knn(test)
                 test_predict = knn_obj.get_prediction()
+                if str(index) not in hits:
+                    hits[str(index)] = 0
                 if test_predict['class'] == float(test_fold[jndex][-1]):
-                    if str(index) not in hits:
-                        hits[str(index)] = 0
                     hits[str(index)] += 1
                 aux += 1
-
             qtty_test = len(test_fold)
             qtty_correct = hits[str(index)]
             # Erro amostral = qnt de erros / pela qnt de instancias de teste

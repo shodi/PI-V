@@ -2,30 +2,29 @@
 # -*- coding: utf-8 -*-
 import csv
 import sys
-import random
 sys.path.append('../kNN')
 from knn import KNN
 
 
 class CrossValidation(object):
-    """Técnica para avaliar a capacidade de generalização de um modelo.
-
+    """Técnica para avaliar a capacidade de generalização de um modelo."""
+    def __init__(self, file_name, iter_count=0):
+        """
         Args:
             file_name (str): Nome do arquivo gerado após o tratamento e
                 processamento dos dados.
+            iter_count (int): ...
 
-    """
-
-    def __init__(self, file_name):
-        """
         Atributos:
             data_set (list): Iniciação da lista que receberá toda a massa de
                 dados a ser trabalhada.
             __set_data: Chamada de execução do método para leitura do arquivo.
 
         """
+
         self.data_set = []
         self.__set_data(file_name)
+        self.iter_count = iter_count
 
     def __set_data(self, file_name):
         """Método de leitura e armazenamento do arquivo a ser processado
@@ -68,19 +67,16 @@ class CrossValidation(object):
                 quantidade de acertos em cada uma k rodadas.
             test_fold (list): Armazena o conjunto de dados, 1/k, usado para a
                 rodada de teste da vez.
-            trainning (list):
+            trainning (list): ...
 
         Args:
             k (int): Quantidade de sublistas a ser dividido.
 
         No Longer Returned:
         """
-        # dividir o arquivo em pedaços
         self.fold = {}
-        line_qtty = sum(1 for line in self.data_set)
-        print("Total of data: {}".format(line_qtty))
-        print("...............")
-        # random.shuffle(self.data_set)
+        line_qtty = sum(1 for row in self.data_set)
+        print(line_qtty)
         aux = 1
         for index in range(0, line_qtty):
             if aux == k + 1:
@@ -90,21 +86,26 @@ class CrossValidation(object):
             self.fold[str(aux)].append(self.data_set[index])
             aux += 1
 
-        # comparar testes e trainamentos
         aux = 0
         hits = {}
         test_fold = None
         for index in range(1, 11):
             test_fold = self.fold[str(index)]
             trainning = []
+            file_lenght = 0
+            classes = []
             for key, sublist in self.fold.iteritems():
                 if int(key) == index:
                     continue
                 else:
                     for line in sublist:
                         trainning.append(line)
+                        file_lenght += 1
+                        if line[-1] not in classes:
+                            classes.append(line[-1])
             knn_obj = KNN(
-                int(sys.argv[1]) if len(sys.argv) > 1 else 3, trainning)
+                self.__get_neighbour_qtd(
+                    self.iter_count, file_lenght, len(classes)), trainning)
 
             for jndex, test in enumerate(test_fold):
                 knn_obj.find_knn(test)
@@ -114,17 +115,35 @@ class CrossValidation(object):
                         hits[str(index)] = 0
                     hits[str(index)] += 1
                 aux += 1
-            avg_hits = float(hits[str(index)] * 100) / float(len(test_fold))
-            print("k fold: {}/10".format(index))
-            print("average of hits: {}%".format(avg_hits))
-            print("...")
+
+            qtty_test = len(test_fold)
+            qtty_correct = hits[str(index)]
+            # Erro amostral = qnt de erros / pela qnt de instancias de teste
+            erro_amostral = ((qtty_test - qtty_correct) / round(qtty_test, 5))
+            # Porcentagem de erro por k-fold
+            print (erro_amostral * 100)
+            # print(test_fold)
+            # print("---------------------------------------------------------")
         print(hits)
+
+    def __get_neighbour_qtd(self, iter_index, file_lenght, classes_qtd):
+        m = classes_qtd + 1 if classes_qtd % 2 == 0 else classes_qtd
+        if iter_index == 0:
+            return 1
+        if iter_index == 1:
+            return m + 2
+        if iter_index == 2:
+            return m * 10 + 1
+        if iter_index == 3:
+            if (file_lenght / 2) % 2 == 0:
+                return (file_lenght / 2) + 1
+            else:
+                return (file_lenght / 2)
 
 
 if __name__ == '__main__':
-    file_name = 'adult_result.csv'
-    # try:
-    cv = CrossValidation(file_name)
-    cv.k_fold(10)
-    # except Exception as error:
-    #     print('DEU ERRO: {}'.format(error))
+    files = ['winequality-red_result.csv']
+    for file_index, _file in enumerate(files):
+        for i in range(4):
+            cv = CrossValidation(_file, i)
+            cv.k_fold(10)

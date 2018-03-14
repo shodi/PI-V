@@ -92,6 +92,18 @@ class KNN:
 
     def __euclidean_distance(self, p, q, metric, skippable_indexes):
         # P e Q são instâncias de uma mesma classe
+        """ Método para o cálculo da distância entre dois pontos
+
+        Este método é cálculo da Distância Euclidiana, usado para medir a
+        distância entre os pontos do espaço de características.
+
+        Args:
+            p (int): Instância de uma classe
+            q (int): Instância de uma classe
+
+        Atributos:
+        
+        """
         _sum = 0
         try:
             # if len(p) != (len(skippable_indexes) + 1):

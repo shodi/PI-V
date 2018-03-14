@@ -238,8 +238,8 @@ class CSVObject:
 
             lculate Euclidean distance in PythonPython
 
-    def euclidean_distance(p, q, length):
-        """Método para o cálculo da distância entre dois pontos
+    #def euclidean_distance(p, q, length):
+        """ Método para o cálculo da distância entre dois pontos
 
         Este método é cálculo da Distância Euclidiana, usado para medir a
         distância entre os pontos do espaço de características.
@@ -252,14 +252,14 @@ class CSVObject:
         Atributos:
             distance (float): Distância calculada entre os valores recebidos
 
-        """
+        
         distance = 0
         for x in range(length):
             distance += (p[x] - q[x]) * (p[x] - q[x])
             # distance += pow((p[x] - q[x]), 2)
         return(distance ** (1/2)
         # return math.sqrt(distance)
-
+    
 # TODO: Implementar método que retira registros que ainda
 # possuem dados nulos de colunas que não foram retiradas no método
 # remove_null_columns

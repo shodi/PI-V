@@ -25,6 +25,7 @@ class CrossValidation(object):
         self.__set_data(file_name)
         self.iter_count = iter_count
         self.classes = None
+        self.matrix = None
         self.metric_column = metric if metric is not None else -1
         self.skippable_indexes = skippable_indexes if skippable_indexes is not None else [0]
 
@@ -130,7 +131,8 @@ class CrossValidation(object):
                 qtty_correct += hits[str(index)][i][i]
             # Erro amostral = qnt de erros / pela qnt de instancias de teste
             erro_amostral.append((qtty_test - qtty_correct) / round(qtty_test, 5))
-        print hits
+        print(hits)
+        self.matrix = hits
         return erro_amostral # array de erro amostral por fold
     
     def __get_neighbour_qtd(self, iter_index, file_lenght):
@@ -178,12 +180,19 @@ if __name__ == '__main__':
     # ]
     files = [
         { 'name': 'wine', 'metric': 1 },
-        { 'name': 'winequality-red', 'skip': []}
+        { 'name': 'winequality-red', 'skip': []},
+        { 'name': 'abalone' },
+        { 'name': 'breast-cancer' },
+        { 'name': 'winequality-white' }
+        { 'name': 'adult' }
     ]
     for file_info in files:
         for i in range(4):
             cv = CrossValidation('%s_result.csv' % file_info.get('name'), i, file_info.get('metric'), file_info.get('skip'))
             errors = cv.k_fold(10)
             print('CVE: %.5lf' % cross_validation_error(errors))
+            with open('./../../resources/spreadsheets/result/%s_matrix.txt' % file_info.get('name'), 'w') as _file:
+                _file.write('{}\n'.format(cv.matrix))
+                _file.write('CVE: %.4lf%%' %(cross_validation_error(errors) * 100))
             
     # print('Erro de validação cruzada: %.5lf' % cross_validation_error(amostral_errors))

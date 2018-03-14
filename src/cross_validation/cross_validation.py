@@ -8,7 +8,7 @@ from knn import KNN
 
 class CrossValidation(object):
     """Técnica para avaliar a capacidade de generalização de um modelo."""
-    def __init__(self, file_name, iter_count=0):
+    def __init__(self, file_name, iter_count=0, metric=-1):
         """
         Args:
             file_name (str): Nome do arquivo gerado após o tratamento e
@@ -21,11 +21,11 @@ class CrossValidation(object):
             __set_data: Chamada de execução do método para leitura do arquivo.
 
         """
-
         self.data_set = []
         self.__set_data(file_name)
         self.iter_count = iter_count
         self.classes = None
+        self.metric_column = metric if metric is not None else -1
 
     def __set_data(self, file_name):
         """Método de leitura e armazenamento do arquivo a ser processado
@@ -103,18 +103,18 @@ class CrossValidation(object):
                     for line in sublist:
                         trainning.append(line)
                         file_lenght += 1
-                        if line[-1] not in self.classes:
-                            self.classes.append(line[-1])
+                        if line[self.metric_column] not in self.classes:
+                            self.classes.append(line[self.metric_column])
             knn_obj = KNN(
                 self.__get_neighbour_qtd(
                     self.iter_count, file_lenght), trainning)
 
             for jndex, test in enumerate(test_fold):
-                knn_obj.find_knn(test)
+                knn_obj.find_knn(test, metric=self.metric_column)
                 test_predict = knn_obj.get_prediction()
                 if str(index) not in hits:
                     hits[str(index)] = 0
-                if test_predict['class'] == float(test_fold[jndex][-1]):
+                if test_predict['class'] == float(test_fold[jndex][self.metric_column]):
                     hits[str(index)] += 1
                 aux += 1
             qtty_test = len(test_fold)
@@ -147,7 +147,11 @@ class CrossValidation(object):
         pass
 
     def __get_multi_level_matrix(self):
-        pass
+        """Método para gerar a matriz de confusão multi-nível"""
+        classes_qtd = len(self.classes)
+        # gera matrix classes_qtd x classes_qtd com 0 em todas as posições
+        matrix = [[0 for x in range(classes_qtd)] for y in range(classes_qtd)]
+
 
     def generate_confusion_matrix(self):
         if len(self.classes) == 2:
@@ -169,10 +173,12 @@ if __name__ == '__main__':
     #     'adult', 'breast-cancer',
     #     'winequality-red', 'winequality-white'
     # ]
-    files = ['wine']
-    for _file in files:
+    files = [
+        { 'name': 'wine', 'metric': 0 }
+    ]
+    for file_info in files:
         for i in range(4):
-            cv = CrossValidation('%s_result.csv' % _file, i)
+            cv = CrossValidation('%s_result.csv' % file_info.get('name'), i, file_info.get('metric'))
             errors = cv.k_fold(10)
             print('CVE: %.5lf' % cross_validation_error(errors))
             

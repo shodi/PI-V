@@ -202,6 +202,17 @@ class CrossValidation(object):
 
 def cross_validation_error(arr):
     # cve = cross_validation_error
+    """ Calculo erro de validação cruzada
+
+    O método consiste em calcular o erro de validação cruzada de cada arquivo.
+    Sendo ele a média da soma dos erros amostrais.
+
+    Args:
+        arr(Array<{[x: int]:float}>): array com cada indice represetando o número da execução do k-fold.
+            O valor referente ao indice corresponde ao resultado do erro amostral.
+    Atributos:
+        _sum (int): Soma dos erros amostrais.
+    """
     _sum = 0
     for error in arr:
         _sum += error

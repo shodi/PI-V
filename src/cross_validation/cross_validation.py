@@ -90,6 +90,7 @@ class CrossValidation(object):
         aux = 0
         hits = {}
         test_fold = None
+        erro_amostral = []
         for index in range(1, 11):
             test_fold = self.fold[str(index)]
             trainning = []
@@ -119,12 +120,13 @@ class CrossValidation(object):
             qtty_test = len(test_fold)
             qtty_correct = hits[str(index)]
             # Erro amostral = qnt de erros / pela qnt de instancias de teste
-            erro_amostral = ((qtty_test - qtty_correct) / round(qtty_test, 5))
+            erro_amostral.append((qtty_test - qtty_correct) / round(qtty_test, 5))
             # Porcentagem de erro por k-fold
-            print (erro_amostral * 100)
+            # print (erro_amostral * 100)
             # print(test_fold)
             # print("---------------------------------------------------------------")
         print hits
+        return erro_amostral # array de erro amostral por fold
     
     def __get_neighbour_qtd(self, iter_index, file_lenght):
         classes_qtd = len(self.classes)
@@ -154,6 +156,13 @@ class CrossValidation(object):
             self.__get_multi_level_matrix()
 
 
+def cross_validation_error(arr):
+    # cve = cross_validation_error
+    _sum = 0
+    for error in arr:
+        _sum += error
+    return _sum / len(arr)
+
 if __name__ == '__main__':
     # files = [
     #     'iris', 'abalone', 'wine',
@@ -164,4 +173,7 @@ if __name__ == '__main__':
     for _file in files:
         for i in range(4):
             cv = CrossValidation('%s_result.csv' % _file, i)
-            cv.k_fold(10)
+            errors = cv.k_fold(10)
+            print('CVE: %.5lf' % cross_validation_error(errors))
+            
+    # print('Erro de validação cruzada: %.5lf' % cross_validation_error(amostral_errors))

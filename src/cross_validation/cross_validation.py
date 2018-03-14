@@ -8,7 +8,7 @@ from knn import KNN
 
 class CrossValidation(object):
     """Técnica para avaliar a capacidade de generalização de um modelo."""
-    def __init__(self, file_name, iter_count=0, metric=-1):
+    def __init__(self, file_name, iter_count=0, metric=-1, skippable_indexes=[0]):
         """
         Args:
             file_name (str): Nome do arquivo gerado após o tratamento e
@@ -26,6 +26,7 @@ class CrossValidation(object):
         self.iter_count = iter_count
         self.classes = None
         self.metric_column = metric if metric is not None else -1
+        self.skippable_indexes = skippable_indexes if skippable_indexes is not None else [0]
 
     def __set_data(self, file_name):
         """Método de leitura e armazenamento do arquivo a ser processado
@@ -110,21 +111,25 @@ class CrossValidation(object):
                     self.iter_count, file_lenght), trainning)
 
             for jndex, test in enumerate(test_fold):
-                knn_obj.find_knn(test, metric=self.metric_column)
+                knn_obj.find_knn(test, metric=self.metric_column, skippable_indexes=self.skippable_indexes)
                 test_predict = knn_obj.get_prediction()
                 if str(index) not in hits:
-                    hits[str(index)] = 0
-                if test_predict['class'] == float(test_fold[jndex][self.metric_column]):
-                    hits[str(index)] += 1
+                    length = len(self.classes)
+                    hits[str(index)] = [[0 for x in range(length)] for y in range(length)]
+                else:
+                    predicted_class = self.get_class_int_value(test_predict['class'])
+                    real_class = self.get_class_int_value(float(test_fold[jndex][self.metric_column]))
+                    hits[str(index)][real_class][predicted_class] += 1
+                # if test_predict['class'] == float(test_fold[jndex][self.metric_column]):
+                #     hits[str(index)] += 1
                 aux += 1
             qtty_test = len(test_fold)
-            qtty_correct = hits[str(index)]
+            qtty_correct = 0
+            for i in range(len(self.classes)): # sempre a matriz vai ter self.classes x self.classes
+                # os acertos sao sempre os valores onde os indices da matriz sao iguais
+                qtty_correct += hits[str(index)][i][i]
             # Erro amostral = qnt de erros / pela qnt de instancias de teste
             erro_amostral.append((qtty_test - qtty_correct) / round(qtty_test, 5))
-            # Porcentagem de erro por k-fold
-            # print (erro_amostral * 100)
-            # print(test_fold)
-            # print("---------------------------------------------------------------")
         print hits
         return erro_amostral # array de erro amostral por fold
     
@@ -142,6 +147,14 @@ class CrossValidation(object):
                 return (file_lenght / 2) + 1
             else:
                 return (file_lenght / 2)
+
+    def get_class_int_value(self, number):
+        """
+        Pega o valor inteiro para representacao de uma classe
+        que, quando normalizada, compreende valores apenas no intervalo [0; 1]
+        """
+        length = len(self.classes)
+        return int(number * (length - 1) - 1)
 
     def __get_confusion_matrix(self):
         pass
@@ -174,11 +187,12 @@ if __name__ == '__main__':
     #     'winequality-red', 'winequality-white'
     # ]
     files = [
-        { 'name': 'wine', 'metric': 0 }
+        { 'name': 'wine', 'metric': 1 },
+        { 'name': 'winequality-red', 'skip': []}
     ]
     for file_info in files:
         for i in range(4):
-            cv = CrossValidation('%s_result.csv' % file_info.get('name'), i, file_info.get('metric'))
+            cv = CrossValidation('%s_result.csv' % file_info.get('name'), i, file_info.get('metric'), file_info.get('skip'))
             errors = cv.k_fold(10)
             print('CVE: %.5lf' % cross_validation_error(errors))
             

@@ -29,9 +29,6 @@ class CSVObject:
         Args:
             file_name(str): Nome do arquivo a ser lido.
 
-        Returns:
-
-        Todo:
         """
         with open('./resources/spreadsheets/{}'.format(
                 file_name)) as csv_file:
@@ -52,11 +49,6 @@ class CSVObject:
             categorization(array<dict>): cada indice representa uma coluna.
                 Cada coluna terá a categorização de seus dados não numéricos.
 
-        Args:
-
-        Returns:
-
-        Todo:
         """
         null_qtty = {}  # por coluna
         line_qtty = 0
@@ -99,17 +91,20 @@ class CSVObject:
     counter = 0
 
     def _get_item_value(self, item, idx):
-        """
+        """Método verificador da tipagem da classe
+
             Método para retornar o valor numerico ou caso não seja um número
             retornar categorizar um item não numérico
-
-            Atributos:
+            
+            Args:
                 item(float || string): valor a ser analizado e
                     categorizado, caso necessário.
-                categorization(Array<{[x: string]: int}>): array com cada
-                    indice representando uma coluna da planilha
                 idx(int): indice do arr_obj correspondente a coluna que está
                     sendo analizada.
+
+            Atributos:
+                categorization(Array<{[x: string]: int}>): array com cada
+                    indice representando uma coluna da planilha
         """
         try:
             return float(item)
@@ -122,6 +117,20 @@ class CSVObject:
             return self.categorization[idx][item]
 
     def data_normalization(self):
+        """Método para normalizar os dados
+            
+            Método para normalizar todos os dados mo mesmo intervalo, sendo [0,1].
+            Nesse momento é feito o cálculo para cada dado do arquvio com base nos
+            valores maximos e minimos dos atributos, dessa forma encontramos 
+            o seu valor correspondente dentro do intervalo estipulado.
+            Os atributos string são convertidos para int e normalizados nesse método.
+
+            Atributos:
+                max_and_min_by_row (dict): Para coda coluna é salvo o seu valor 
+                    maximo e minino
+                categorization(Array<{[x: string]: int}>): array com cada
+                    indice representando uma coluna da planilha
+        """        
         max_and_min_by_row = {}
         for line_number, line in enumerate(self.data):
             for index, item in enumerate(line):
@@ -150,6 +159,17 @@ class CSVObject:
         # (item - menor_item)/(maior_item - menor_item )
 
     def remove_outliers(self):
+        """Método para remover dados outliers
+
+        O método consiste em remover os dados considerados como outliers, 
+        tendo como base para essa vericação o cálculo dos quartis.
+        Considerando os valores que ultrapassam o cálculo como outliers
+
+        Atributos:
+            pre_data (dict): 
+            pos_data (dict):
+
+        """ 
         pre_data = {}
         for row_number, line in enumerate(self.data):
             if self.do_have_headers and row_number == 0:
@@ -219,6 +239,20 @@ class CSVObject:
             lculate Euclidean distance in PythonPython
 
     def euclidean_distance(p, q, length):
+        """Método para o cálculo da distância entre dois pontos
+
+        Este método é cálculo da Distância Euclidiana, usado para medir a
+        distância entre os pontos do espaço de características.
+
+        Args:
+            p (int): Instância de uma classe
+            q (int): Instância de uma classe
+            length (float): Quantidade de instâncias da classe
+
+        Atributos:
+            distance (float): Distância calculada entre os valores recebidos
+
+        """
         distance = 0
         for x in range(length):
             distance += (p[x] - q[x]) * (p[x] - q[x])

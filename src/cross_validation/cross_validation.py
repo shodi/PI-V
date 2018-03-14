@@ -186,6 +186,14 @@ class CrossValidation(object):
         return int(number * (length - 1) - 1)
 
     def generate_confusion_matrix(self):
+        """ Gerando Matrizes de Confusão
+
+        O método consiste em receber o arquivo e gerar a matriz de confusão respectiva ao mesmo.
+        Vericamos se quantidade de categorias da clase é igual a 2, se sim a matriz gerada
+        será a Matriz de confusão binária.
+        Se a quantidade de categoria da classe for maior que 2, será gerada a Matriz de confusão multi-nível.
+
+        """
         if len(self.classes) == 2:
             self.__get_confusion_matrix()
         else:

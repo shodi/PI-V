@@ -134,6 +134,25 @@ class CrossValidation(object):
         return erro_amostral # array de erro amostral por fold
     
     def __get_neighbour_qtd(self, iter_index, file_lenght):
+        """Processa as informações do arquivo com as 4 formas de knn
+
+        Este método utiliza as separações do 10-fold para classificar as classes
+        das instâncias pertencentes a partição de teste.
+        É feita uma classificação para cada forma do knn, cada forma possui sua regra.
+        1) Considera apenas o primeiro vizinho mais próximo
+        2) Considera a quantidade de classes + 2 vizinhos mais próximos
+        3) Considera a quantidade de classes * 10 + 1 vizinhos mais próximos
+        4) Considera a quantidade de instâncias / 2 vizinhos mais próximos 
+
+        Args:
+            iter_index (int): Identifica qual forma de knn a ser aplicada (1-4)
+            file_lenght (int): Quantidade de instâncias do arquivo a ser lido.
+
+        Atributos:
+            classes_qtd (int): Calcula a quantidade de classes total no arquivo
+            m(int): Calculo da quantidade de classes + 1 para uso nas formas de knn
+            
+        """
         classes_qtd = len(self.classes)
         m = classes_qtd + 1 if classes_qtd % 2 == 0 else classes_qtd
         if iter_index == 0:

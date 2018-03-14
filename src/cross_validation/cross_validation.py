@@ -156,16 +156,6 @@ class CrossValidation(object):
         length = len(self.classes)
         return int(number * (length - 1) - 1)
 
-    def __get_confusion_matrix(self):
-        pass
-
-    def __get_multi_level_matrix(self):
-        """Método para gerar a matriz de confusão multi-nível"""
-        classes_qtd = len(self.classes)
-        # gera matrix classes_qtd x classes_qtd com 0 em todas as posições
-        matrix = [[0 for x in range(classes_qtd)] for y in range(classes_qtd)]
-
-
     def generate_confusion_matrix(self):
         if len(self.classes) == 2:
             self.__get_confusion_matrix()

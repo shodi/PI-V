@@ -22,7 +22,7 @@ class KNN:
         self.instance_qtd = 0  
         self.data_set = data_set
 
-    def __set_data(self, file_name):
+    def set_data(self, file_name):
         """Método de leitura e armazenamento do arquivo a ser processado
 
         Este método faz a leitura do arquivo para armazena-lo para que possa
@@ -116,3 +116,10 @@ class KNN:
             return math.sqrt(_sum)
         except Exception as error:
             raise error
+
+if __name__ == '__main__':
+    knn = KNN(3, [])
+    knn.set_data('iris_result.csv')
+    test_value = ['0.70','0.166','0.20','0.59','0.66','1.0']
+    knn.find_knn(test_value, skippable_indexes=[0])
+    print('PREDICAO: {}'.format(knn.get_prediction()))

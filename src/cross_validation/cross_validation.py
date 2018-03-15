@@ -183,7 +183,7 @@ if __name__ == '__main__':
         { 'name': 'winequality-red', 'skip': []},
         { 'name': 'abalone' },
         { 'name': 'breast-cancer' },
-        { 'name': 'winequality-white' }
+        { 'name': 'winequality-white' },
         { 'name': 'adult' }
     ]
     for file_info in files:

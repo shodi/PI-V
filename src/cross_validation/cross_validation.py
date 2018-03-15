@@ -136,6 +136,25 @@ class CrossValidation(object):
         return erro_amostral # array de erro amostral por fold
     
     def __get_neighbour_qtd(self, iter_index, file_lenght):
+        """Processa as informações do arquivo com as 4 formas de knn
+
+        Este método utiliza as separações do 10-fold para classificar as classes
+        das instâncias pertencentes a partição de teste.
+        É feita uma classificação para cada forma do knn, cada forma possui sua regra:
+        1) Considera apenas o primeiro vizinho mais próximo;
+        2) Considera a quantidade de classes + 2 vizinhos mais próximos;
+        3) Considera a quantidade de classes * 10 + 1 vizinhos mais próximos;
+        4) Considera a quantidade de instâncias / 2 vizinhos mais próximos.
+
+        Args:
+            iter_index (int): Identifica qual forma de knn a ser aplicada (1-4).
+            file_lenght (int): Quantidade de instâncias do arquivo a ser lido.
+
+        Atributos:
+            classes_qtd (int): Calcula a quantidade de classes total no arquivo.
+            m(int): Calculo da quantidade de classes + 1 para uso nas formas de knn.
+
+        """
         classes_qtd = len(self.classes)
         m = classes_qtd + 1 if classes_qtd % 2 == 0 else classes_qtd
         if iter_index == 0:
@@ -151,14 +170,32 @@ class CrossValidation(object):
                 return (file_lenght / 2)
 
     def get_class_int_value(self, number):
-        """
-        Pega o valor inteiro para representacao de uma classe
-        que, quando normalizada, compreende valores apenas no intervalo [0; 1]
+        """ Transforma o valor da classe normalizada em inteiro
+
+        O método consiste em transformar o valor das classes em inteiro.
+        É feito esse tratamento pois, no mometo em que estamos normalizando os dados para o intervalo de [0,1]
+        os valores das classes tambem são normalizados e se essa classe possuir mais de 2 valores
+        diferentes ela assumira um número não inteiro na normalização.
+        
+        Args:
+            number (int): Valor da classe normalizada.
+
+        Atributos:
+            length (int): Quantidade de categorias da classe.
+
         """
         length = len(self.classes)
         return int(number * (length - 1) - 1)
 
     def generate_confusion_matrix(self):
+        """ Gerando Matrizes de Confusão
+
+        O método consiste em receber o arquivo e gerar a matriz de confusão respectiva ao mesmo.
+        Vericamos se quantidade de categorias da clase é igual a 2, se sim a matriz gerada
+        será a Matriz de confusão binária.
+        Se a quantidade de categoria da classe for maior que 2, será gerada a Matriz de confusão multi-nível.
+
+        """
         if len(self.classes) == 2:
             self.__get_confusion_matrix()
         else:
@@ -167,6 +204,17 @@ class CrossValidation(object):
 
 def cross_validation_error(arr):
     # cve = cross_validation_error
+    """ Calculo erro de validação cruzada
+
+    O método consiste em calcular o erro de validação cruzada de cada arquivo.
+    Sendo ele a média da soma dos erros amostrais.
+
+    Args:
+        arr(Array<{[x: int]:float}>): array com cada indice represetando o número da execução do k-fold.
+            O valor referente ao indice corresponde ao resultado do erro amostral.
+    Atributos:
+        _sum (int): Soma dos erros amostrais.
+    """
     _sum = 0
     for error in arr:
         _sum += error

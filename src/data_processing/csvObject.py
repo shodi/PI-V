@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import csv
 import os
+import math
 
 
 class CSVObject:
@@ -9,7 +10,8 @@ class CSVObject:
         self.data = []
         self.statistic = {}
         self.do_have_headers = do_have_headers
-        self.set_data(file_name)
+        self.file_name = file_name
+        self.set_data(self.file_name)
         self.categorization = None
 
     def set_null_notation(self, null_notation):
@@ -28,9 +30,6 @@ class CSVObject:
         Args:
             file_name(str): Nome do arquivo a ser lido.
 
-        Returns:
-
-        Todo:
         """
         with open('./resources/spreadsheets/{}'.format(
                 file_name)) as csv_file:
@@ -51,11 +50,6 @@ class CSVObject:
             categorization(array<dict>): cada indice representa uma coluna.
                 Cada coluna terá a categorização de seus dados não numéricos.
 
-        Args:
-
-        Returns:
-
-        Todo:
         """
         null_qtty = {}  # por coluna
         line_qtty = 0
@@ -98,17 +92,20 @@ class CSVObject:
     counter = 0
 
     def _get_item_value(self, item, idx):
-        """
+        """Método verificador da tipagem da classe
+
             Método para retornar o valor numerico ou caso não seja um número
             retornar categorizar um item não numérico
-
-            Atributos:
+            
+            Args:
                 item(float || string): valor a ser analizado e
                     categorizado, caso necessário.
-                categorization(Array<{[x: string]: int}>): array com cada
-                    indice representando uma coluna da planilha
                 idx(int): indice do arr_obj correspondente a coluna que está
                     sendo analizada.
+
+            Atributos:
+                categorization(Array<{[x: string]: int}>): array com cada
+                    indice representando uma coluna da planilha
         """
         try:
             return float(item)
@@ -121,6 +118,20 @@ class CSVObject:
             return self.categorization[idx][item]
 
     def data_normalization(self):
+        """Método para normalizar os dados
+            
+            Método para normalizar todos os dados mo mesmo intervalo, sendo [0,1].
+            Nesse momento é feito o cálculo para cada dado do arquvio com base nos
+            valores maximos e minimos dos atributos, dessa forma encontramos 
+            o seu valor correspondente dentro do intervalo estipulado.
+            Os atributos string são convertidos para int e normalizados nesse método.
+
+            Atributos:
+                max_and_min_by_row (dict): Para coda coluna é salvo o seu valor 
+                    maximo e minino
+                categorization(Array<{[x: string]: int}>): array com cada
+                    indice representando uma coluna da planilha
+        """        
         max_and_min_by_row = {}
         for line_number, line in enumerate(self.data):
             for index, item in enumerate(line):
@@ -149,6 +160,17 @@ class CSVObject:
         # (item - menor_item)/(maior_item - menor_item )
 
     def remove_outliers(self):
+        """Método para remover dados outliers
+
+        O método consiste em remover os dados considerados como outliers,
+        tendo como base para essa vericação o cálculo dos quartis.
+        Considerando os valores que ultrapassam o cálculo como outliers
+
+        Atributos:
+            pre_data (dict):
+            pos_data (dict):
+
+        """
         pre_data = {}
         for row_number, line in enumerate(self.data):
             if self.do_have_headers and row_number == 0:
@@ -163,6 +185,8 @@ class CSVObject:
                 else:
                     pre_data[str_idx] = [float_item]
         pos_data = {}
+        outlier_by_row = {}
+        print("Arquivo {}".format(self.file_name))
         for key in pre_data:
             aux = sorted(pre_data[key][:])
             length = len(aux)
@@ -186,12 +210,35 @@ class CSVObject:
                 pos_data[key]['IQR']
             pos_data[key]['down_limit'] = pos_data[key]['average'] - 1.5 * \
                 pos_data[key]['IQR']
+
+            outlier_by_row[str(key)] = {}
+            outlier_by_row[str(key)]['down_limit'] = 0
+            outlier_by_row[str(key)]['up_limit'] = 0
+
+            for item in aux:
+                if item < pos_data[key]['down_limit']:
+                    outlier_by_row[str(key)]['down_limit'] += 1
+
+                if item < pos_data[key]['up_limit']:
+                    outlier_by_row[str(key)]['up_limit'] += 1
+
+            print(
+                "Coluna {} | Down Limit: {} | Quantidade de itens na tabela: {}".format(
+                    key,
+                    pos_data[key]['down_limit'],
+                    outlier_by_row[str(key)]['down_limit']))
+
+            print(
+                "Coluna {} | Up Limit: {} | Quantidade de itens na tabela: {}".format(
+                    key,
+                    pos_data[key]['up_limit'],
+                    outlier_by_row[str(key)]['up_limit']))
+
             for item in aux:
                 if item < pos_data[key]['down_limit']:
                     aux.remove(item)
                 if item > pos_data[key]['up_limit']:
                     aux.remove(item)
-            print(aux)
 
     def generate_result(self,
                         result_file_name,
@@ -205,18 +252,10 @@ class CSVObject:
                 path(string): Caminho para o local onde será armazenado
                     tal arquivo.
         """
-        file_path = '%s/%s' %(path, result_file_name) 
+        file_path = '%s/%s' % (path, result_file_name) 
         if not os.path.exists(os.path.dirname(file_path)):
             os.makedirs(os.path.dirname(file_path))
         with open(file_path, mode="w+") as result_csv:
             for item in self.data:
                 line = ';'.join(map(str, item))
                 result_csv.writelines('%s\n' % line)
-        # coloca isso para testar direto no terminal
-        # import pdb; pdb.set_trace()
-
-# TODO: Implementar método que retira registros que ainda
-# possuem dados nulos de colunas que não foram retiradas no método
-# remove_null_columns
-# if __name__ != '__main__':
-# import fortran

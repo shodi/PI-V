@@ -5,12 +5,21 @@ import csv
 
 
 class KNN:
+    """Técnica para classificação de dados"""
     def __init__(self, k, data_set):
-        # Quantidade de vizinhos mais próximos
-        # a considerar
+        """
+        Args:
+            k (int): Quantidade de vizinhos
+            data_set (list): Recebe lista dos dados contendo toda a massa de 
+                dados a serem trabalhadas.
+
+        Atributos:
+            instance_qtd (int): Quantidade de linhas do arquivo.
+
+        """
         self.k = k
         self.kNN = None
-        self.instance_qtd = 0  # quantidade de linhas do arquivo
+        self.instance_qtd = 0  
         self.data_set = data_set
 
     def __set_data(self, file_name):
@@ -25,9 +34,6 @@ class KNN:
         Args:
             file_name(str): Nome do arquivo a ser lido.
 
-        Returns:
-
-        Todo:
         """
         with open('./../../resources/spreadsheets/result/{}'.format(
                 file_name)) as csv_file:
@@ -86,6 +92,18 @@ class KNN:
 
     def __euclidean_distance(self, p, q, metric, skippable_indexes):
         # P e Q são instâncias de uma mesma classe
+        """ Método para o cálculo da distância entre dois pontos
+
+        Este método é cálculo da Distância Euclidiana, usado para medir a
+        distância entre os pontos do espaço de características.
+
+        Args:
+            p (int): Instância de uma classe
+            q (int): Instância de uma classe
+
+        Atributos:
+        
+        """
         _sum = 0
         try:
             # if len(p) != (len(skippable_indexes) + 1):

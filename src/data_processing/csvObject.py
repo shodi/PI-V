@@ -10,7 +10,8 @@ class CSVObject:
         self.data = []
         self.statistic = {}
         self.do_have_headers = do_have_headers
-        self.set_data(file_name)
+        self.file_name = file_name
+        self.set_data(self.file_name)
         self.categorization = None
 
     def set_null_notation(self, null_notation):
@@ -161,15 +162,15 @@ class CSVObject:
     def remove_outliers(self):
         """Método para remover dados outliers
 
-        O método consiste em remover os dados considerados como outliers, 
+        O método consiste em remover os dados considerados como outliers,
         tendo como base para essa vericação o cálculo dos quartis.
         Considerando os valores que ultrapassam o cálculo como outliers
 
         Atributos:
-            pre_data (dict): 
+            pre_data (dict):
             pos_data (dict):
 
-        """ 
+        """
         pre_data = {}
         for row_number, line in enumerate(self.data):
             if self.do_have_headers and row_number == 0:
@@ -184,6 +185,8 @@ class CSVObject:
                 else:
                     pre_data[str_idx] = [float_item]
         pos_data = {}
+        outlier_by_row = {}
+        print("Arquivo {}".format(self.file_name))
         for key in pre_data:
             aux = sorted(pre_data[key][:])
             length = len(aux)
@@ -207,12 +210,35 @@ class CSVObject:
                 pos_data[key]['IQR']
             pos_data[key]['down_limit'] = pos_data[key]['average'] - 1.5 * \
                 pos_data[key]['IQR']
+
+            outlier_by_row[str(key)] = {}
+            outlier_by_row[str(key)]['down_limit'] = 0
+            outlier_by_row[str(key)]['up_limit'] = 0
+
+            for item in aux:
+                if item < pos_data[key]['down_limit']:
+                    outlier_by_row[str(key)]['down_limit'] += 1
+
+                if item < pos_data[key]['up_limit']:
+                    outlier_by_row[str(key)]['up_limit'] += 1
+
+            print(
+                "Coluna {} | Down Limit: {} | Quantidade de itens na tabela: {}".format(
+                    key,
+                    pos_data[key]['down_limit'],
+                    outlier_by_row[str(key)]['down_limit']))
+
+            print(
+                "Coluna {} | Up Limit: {} | Quantidade de itens na tabela: {}".format(
+                    key,
+                    pos_data[key]['up_limit'],
+                    outlier_by_row[str(key)]['up_limit']))
+
             for item in aux:
                 if item < pos_data[key]['down_limit']:
                     aux.remove(item)
                 if item > pos_data[key]['up_limit']:
                     aux.remove(item)
-            print(aux)
 
     def generate_result(self,
                         result_file_name,
@@ -226,42 +252,10 @@ class CSVObject:
                 path(string): Caminho para o local onde será armazenado
                     tal arquivo.
         """
-        file_path = '%s/%s' %(path, result_file_name) 
+        file_path = '%s/%s' % (path, result_file_name) 
         if not os.path.exists(os.path.dirname(file_path)):
             os.makedirs(os.path.dirname(file_path))
         with open(file_path, mode="w+") as result_csv:
             for item in self.data:
                 line = ';'.join(map(str, item))
                 result_csv.writelines('%s\n' % line)
-        # coloca isso para testar direto no terminal
-        # import pdb; pdb.set_trace()
-
-            lculate Euclidean distance in PythonPython
-
-    #def euclidean_distance(p, q, length):
-        """ Método para o cálculo da distância entre dois pontos
-
-        Este método é cálculo da Distância Euclidiana, usado para medir a
-        distância entre os pontos do espaço de características.
-
-        Args:
-            p (int): Instância de uma classe
-            q (int): Instância de uma classe
-            length (float): Quantidade de instâncias da classe
-
-        Atributos:
-            distance (float): Distância calculada entre os valores recebidos
-
-        
-        distance = 0
-        for x in range(length):
-            distance += (p[x] - q[x]) * (p[x] - q[x])
-            # distance += pow((p[x] - q[x]), 2)
-        return(distance ** (1/2)
-        # return math.sqrt(distance)
-    
-# TODO: Implementar método que retira registros que ainda
-# possuem dados nulos de colunas que não foram retiradas no método
-# remove_null_columns
-# if __name__ != '__main__':
-# import fortran

@@ -50,4 +50,4 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 Tudo certo, o Django está instalado corretamente dentro do ambiente `env`.
 
-Para sair do ambiente virtual ativo, utilize o comando deactivate.
+Para sair do ambiente virtual ativo, utilize o comando `deactivate`.

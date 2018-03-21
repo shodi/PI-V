@@ -227,19 +227,20 @@ if __name__ == '__main__':
     #     'winequality-red', 'winequality-white'
     # ]
     files = [
-        { 'name': 'wine', 'metric': 1 },
-        { 'name': 'winequality-red', 'skip': []},
-        { 'name': 'abalone' },
-        { 'name': 'breast-cancer' },
-        { 'name': 'winequality-white' },
-        { 'name': 'adult' }
+        { 'name': 'iris' }
+        # { 'name': 'wine', 'metric': 1 },
+        # { 'name': 'winequality-red', 'skip': []},
+        # { 'name': 'abalone' },
+        # { 'name': 'breast-cancer' },
+        # { 'name': 'winequality-white' }
+        # { 'name': 'adult' }
     ]
     for file_info in files:
         for i in range(4):
             cv = CrossValidation('%s_result.csv' % file_info.get('name'), i, file_info.get('metric'), file_info.get('skip'))
             errors = cv.k_fold(10)
             print('CVE: %.5lf' % cross_validation_error(errors))
-            with open('./../../resources/spreadsheets/result/%s_matrix.txt' % file_info.get('name'), 'w') as _file:
+            with open('./../../resources/spreadsheets/result/%s_matrix.txt' % file_info.get('name'), 'a') as _file:
                 _file.write('{}\n'.format(cv.matrix))
                 _file.write('CVE: %.4lf%%' %(cross_validation_error(errors) * 100))
             

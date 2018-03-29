@@ -5,7 +5,7 @@ import random
 import math
 
 class LVQ(object):
-    def __init__(self, data_set, data_set_size, classes_qtd, radius):
+    def __init__(self, data_set, data_set_size, classes_qtd, radius, qtd_attr, skippable_indexes=[]):
         self.data_set = data_set
         self.data_set_size = data_set_size
         self.classes_qtd = classes_qtd
@@ -13,6 +13,8 @@ class LVQ(object):
         # self.const_t1 = 1000 / math.log(self.desvio_padrao)
         self.taxa_aprendizado = 0.1
         self.decaimento_aprendizado = 1000
+        self.skippable_indexes = skippable_indexes
+        self.quantidade_atributos = qtd_attr
 
     @staticmethod
     def get_random_value(init=0.1, final=1):
@@ -20,21 +22,26 @@ class LVQ(object):
 
     def get_initial_matrix(self, size):
         length = int(round(math.sqrt(self.classes_qtd * size)))
-        matrix = [[LVQ.get_random_value() for i in range(length)] for i in range(length)]
+        matrix = [
+            [LVQ.get_random_value() if i != self.quantidade_atributos - 1 else None for i in range(self.quantidade_atributos)] 
+            for i in range(length)]
         self.matrix = matrix
+
+    def get_learning_rate(self, iteration):
+        return math.exp(-(iteration / self.decaimento_aprendizado))
 
     def get_best_matching_unit(self, data_set, row_test):
         distances = []
         for instance in data_set:
-            dist = self.euclidean_distance(instance, row_test, 5, [5])
+            dist = self.euclidean_distance(instance, row_test)
             distances.append((instance, dist))
         distances.sort(key=lambda distance: distance[1])
         return distances[0][0]
 
-    def train(self, epochs=10):
+    def train(self, epochs=500):
         self.get_initial_matrix(10)
         for epoch in range(epochs):
-            rate = self.taxa_aprendizado * (1.0 - (epoch/float(epochs)))
+            rate = self.get_learning_rate(epoch)
             sum_error = 0.0
             for row in self.data_set:
                 bmu = self.get_best_matching_unit(self.matrix, row)
@@ -42,26 +49,29 @@ class LVQ(object):
                     error = row[i] - bmu[i]
                     sum_error += error**2
                     if bmu[-1] == row[-1]:
-                        bmu[i] = bmu[i] + rate * (row[i] - bmu[i])
+                        bmu[i] = bmu[i] + (rate * (row[i] - bmu[i]))
                     else:
-                        bmu[i] = bmu[i] - rate * (row[i] - bmu[i])
+                        bmu[i] = bmu[i] - (rate * (row[i] - bmu[i]))
             print('>iteracao=%d, taxa=%.3f, error=%.3f' % (epoch, rate, sum_error))
         return self.matrix
 
 
-    def euclidean_distance(self, p, q, metric, skippable_indexes):
+    def euclidean_distance(self, p, q):
         _sum = 0
         for index, item in enumerate(q):
-            if index in skippable_indexes or index == metric:
+            if index in self.skippable_indexes:
                 continue
+            print('item: {}\nvalue: {}  index:{}'.format(item, p, index))
             _sum += (float(item) - float(p[index])) ** 2
         return math.sqrt(_sum)
 
 if __name__ == '__main__':
     import csv
-    files = ['iris_result']
+    files = [
+        {'name': 'iris_result', 'skippable': [5, 0], 'attr_qtd': 6, 'classes_qtd': 3}
+    ]
     for _file in files:
-        with open('../../../resources/spreadsheets/result/%s.csv' % _file, 'rb') as csv_file:
+        with open('../../../resources/spreadsheets/result/%s.csv' % _file.get('name'), 'rb') as csv_file:
             data_set = []
             data_set_size = 0
             lines = csv.reader(csv_file, delimiter=';')
@@ -71,6 +81,5 @@ if __name__ == '__main__':
                     aux.append(float(attr))
                 data_set.append(aux)
                 data_set_size += 1
-            lvq = LVQ(data_set, data_set_size, 3, 1)
+            lvq = LVQ(data_set, data_set_size, _file.get('classes_qtd'), 1, _file.get('attr_qtd'), _file.get('skippable') or [])
             lvq.train()
-

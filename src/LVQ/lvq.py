@@ -15,6 +15,7 @@ class LVQ(object):
         self.decaimento_aprendizado = 1000
         self.skippable_indexes = skippable_indexes
         self.quantidade_atributos = qtd_attr
+        self.metric = -1
 
     @staticmethod
     def get_random_value(init=0.1, final=1):
@@ -40,28 +41,37 @@ class LVQ(object):
 
     def train(self, epochs=500):
         self.get_initial_matrix(10)
-        for epoch in range(epochs):
+        for epoch in range(epochs + 1):
             rate = self.get_learning_rate(epoch)
             sum_error = 0.0
             for row in self.data_set:
                 bmu = self.get_best_matching_unit(self.matrix, row)
                 for i in range(len(row) - 1):
+                    if i == self.metric:
+                        continue
                     error = row[i] - bmu[i]
                     sum_error += error**2
-                    if bmu[-1] == row[-1]:
-                        bmu[i] = bmu[i] + (rate * (row[i] - bmu[i]))
-                    else:
-                        bmu[i] = bmu[i] - (rate * (row[i] - bmu[i]))
-            print('>iteracao=%d, taxa=%.3f, error=%.3f' % (epoch, rate, sum_error))
+                    self.update_neighbours(bmu, row, i, rate)
+                print('>iteracao=%d, taxa=%.3f, error=%.3f' % (epoch, rate, sum_error))
         return self.matrix
 
+    def update_neighbours(self, bmu, row, index, rate):
+        # matched é um booleando que diz se a instancia de 
+        # teste é da mesma classe que o neuronio gerado aleatoriamente
+        if bmu[self.metric] is None:
+            bmu[self.metric] = row[self.metric]
+        elif bmu[self.metric] == row[self.metric]:
+            bmu[index] = bmu[index] + (rate * (row[index] - bmu[index]))
+        elif bmu[self.metric] != row[self.metric]:
+            bmu[index] = bmu[index] - (rate * (row[index] - bmu[index]))
+            bmu[self.metric] = row[self.metric]
 
     def euclidean_distance(self, p, q):
         _sum = 0
         for index, item in enumerate(q):
             if index in self.skippable_indexes:
                 continue
-            print('item: {}\nvalue: {}  index:{}'.format(item, p, index))
+            # print('item: {}\nvalue: {}  index:{}'.format(item, p, index))
             _sum += (float(item) - float(p[index])) ** 2
         return math.sqrt(_sum)
 
@@ -71,7 +81,7 @@ if __name__ == '__main__':
         {'name': 'iris_result', 'skippable': [5, 0], 'attr_qtd': 6, 'classes_qtd': 3}
     ]
     for _file in files:
-        with open('../../../resources/spreadsheets/result/%s.csv' % _file.get('name'), 'rb') as csv_file:
+        with open('../../resources/spreadsheets/result/%s.csv' % _file.get('name'), 'rb') as csv_file:
             data_set = []
             data_set_size = 0
             lines = csv.reader(csv_file, delimiter=';')

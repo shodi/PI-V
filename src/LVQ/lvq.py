@@ -44,12 +44,14 @@ class LVQ(object):
         self.get_initial_matrix(10)
         for epoch in range(epochs + 1):
             rate = self.get_learning_rate(epoch)
+            # sum_error = 0.0
             for row in self.data_set:
                 bmu = self.get_best_matching_unit(self.matrix, row)
                 for i in range(len(row) - 1):
                     if i == self.metric:
                         continue
-                    error = row[i] - bmu[i]
+                    # error = row[i] - bmu[i]
+                    # sum_error += error**2
                     self.update_neighbours(bmu, row, i, rate)
                 print('>iteracao=%d, taxa=%f' % (epoch, rate))
         return self.matrix

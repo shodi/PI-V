@@ -29,7 +29,8 @@ class LVQ(object):
         self.matrix = matrix
 
     def get_learning_rate(self, iteration):
-        return self.taxa_aprendizado * math.exp(-(iteration / self.decaimento_aprendizado))
+        self.taxa_aprendizado = self.taxa_aprendizado * math.exp(-(0.1 / 1000.0))
+        return self.taxa_aprendizado
 
     def get_best_matching_unit(self, data_set, row_test):
         distances = []
@@ -52,7 +53,7 @@ class LVQ(object):
                     error = row[i] - bmu[i]
                     sum_error += error**2
                     self.update_neighbours(bmu, row, i, rate)
-                print('>iteracao=%d, taxa=%.3f, error=%.3f' % (epoch, rate, sum_error))
+                print('>iteracao=%d, taxa=%f, error=%.3f' % (epoch, rate, sum_error))
         return self.matrix
 
     def update_neighbours(self, bmu, row, index, rate):

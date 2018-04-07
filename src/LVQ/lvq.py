@@ -29,7 +29,7 @@ class LVQ(object):
         self.matrix = matrix
 
     def get_learning_rate(self, iteration):
-        return math.exp(-(iteration / self.decaimento_aprendizado))
+        return self.taxa_aprendizado * math.exp(-(iteration / self.decaimento_aprendizado))
 
     def get_best_matching_unit(self, data_set, row_test):
         distances = []
@@ -71,7 +71,6 @@ class LVQ(object):
         for index, item in enumerate(q):
             if index in self.skippable_indexes:
                 continue
-            # print('item: {}\nvalue: {}  index:{}'.format(item, p, index))
             _sum += (float(item) - float(p[index])) ** 2
         return math.sqrt(_sum)
 

@@ -5,7 +5,7 @@ import random
 import math
 
 class LVQ(object):
-    def __init__(self, data_set, data_set_size, classes_qtd, radius, qtd_attr, skippable_indexes=[]):
+    def __init__(self, data_set, data_set_size, classes_qtd, radius, qtd_attr, skippable_indexes=[], metric=-1):
         self.data_set = data_set
         self.data_set_size = data_set_size
         self.classes_qtd = classes_qtd
@@ -15,7 +15,7 @@ class LVQ(object):
         self.decaimento_aprendizado = 1000
         self.skippable_indexes = skippable_indexes
         self.quantidade_atributos = qtd_attr
-        self.metric = -1
+        self.metric = metric
 
     @staticmethod
     def get_random_value(init=0.1, final=1):
@@ -44,14 +44,11 @@ class LVQ(object):
         self.get_initial_matrix(10)
         for epoch in range(epochs + 1):
             rate = self.get_learning_rate(epoch)
-            # sum_error = 0.0
             for row in self.data_set:
                 bmu = self.get_best_matching_unit(self.matrix, row)
                 for i in range(len(row) - 1):
-                    if i == self.metric:
+                    if i == self.metric or i in self.skippable_indexes:
                         continue
-                    # error = row[i] - bmu[i]
-                    # sum_error += error**2
                     self.update_neighbours(bmu, row, i, rate)
                 print('>iteracao=%d, taxa=%f' % (epoch, rate))
         return self.matrix
@@ -91,5 +88,5 @@ if __name__ == '__main__':
                     aux.append(float(attr))
                 data_set.append(aux)
                 data_set_size += 1
-            lvq = LVQ(data_set, data_set_size, _file.get('classes_qtd'), 1, _file.get('attr_qtd'), _file.get('skippable') or [])
-            lvq.train()
+            lvq = LVQ(data_set, data_set_size, _file.get('classes_qtd'), 1, _file.get('attr_qtd'), _file.get('skippable') or [], _file.get('metric') or -1)
+            print(lvq.train())

@@ -1,6 +1,6 @@
 import subprocess
 import re
-import os
+# import os
 
 subprocess.call(['./ffmpeg_verify.sh'])
 
@@ -12,4 +12,4 @@ for file in folder:
         'ffmpeg -i {0} -c:a pcm_f32le {1}'.format(file, new_name),
         shell=True,
         cwd='./audios')
-    os.remove('./audios/{0}'.format(file))
+    # os.remove('./audios/{0}'.format(file))

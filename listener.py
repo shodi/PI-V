@@ -1,4 +1,4 @@
-import alsaaudio, time, audioop
+'''import alsaaudio, time, audioop
 import matplotlib.pyplot as plt
 import struct
 import numpy as np
@@ -29,4 +29,10 @@ while True:
         line.set_ydata(data_int)
         fig.canvas.draw()
         fig.canvas.flush_events()
-    time.sleep(.001)
+    time.sleep(.001)'''
+
+import matplotlib.pyplot as plt
+from scipy.io import wavfile as wav
+rate, data = wav.read('./audios/wav/mulher_2.wav')
+plt.plot(data)
+plt.show()

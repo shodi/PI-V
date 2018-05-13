@@ -21,7 +21,7 @@ for old_file in folder:
     new_file = re.sub('(.mpeg|.mp4|.ogg)$', '.wav', old_file)
 
     subprocess.call(
-        'ffmpeg -i {0} -c:a pcm_f32le {1}'.format(old_file, new_file),
+        'ffmpeg -i {0} -ac 2 {1}'.format(old_file, new_file),
         shell=True,
         cwd='./audios')
 

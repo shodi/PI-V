@@ -1,6 +1,7 @@
 # import matplotlib.pyplot as plt
 from scipy.io import wavfile as wav
 from scipy.fftpack import fft
+from scipy.stats import kurtosis
 import numpy as np
 import wave
 import contextlib
@@ -17,8 +18,8 @@ class Listener(object):
                        count=array([[2074, 2074]]))
 
         Example:
-from listener import Listener
-listener = Listener('./audios/wav/mulher_8.wav')
+            from listener import Listener
+            listener = Listener('./audios/wav/mulher_1.wav')
             <listener.Listener object at 0x105ccc350>
 
         Args:
@@ -35,6 +36,7 @@ listener = Listener('./audios/wav/mulher_8.wav')
         self.iq3 = np.percentile(self.audio_data, q=75)
         self.median = np.percentile(self.audio_data, q=50)
         self.label = 'homem' if 'homem' in file_name else 'mulher'
+        self.kurtosis = kurtosis(self.audio_data)
         self.maxfun = np.amax(fft(self.audio_data))
         self.maxfreq = np.amax(self.audio_data)
         self.meanfreq = np.mean(self.audio_data)

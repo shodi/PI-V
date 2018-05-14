@@ -1,7 +1,7 @@
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from scipy.io import wavfile as wav
 from scipy.fftpack import fft
-import numpy as np
+# import numpy as np
 import wave
 import contextlib
 

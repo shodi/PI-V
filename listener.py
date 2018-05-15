@@ -18,8 +18,8 @@ class Listener(object):
                        count=array([[2074, 2074]]))
 
         Example:
-            from listener import Listener
-            listener = Listener('./audios/wav/mulher_1.wav')
+from listener import Listener
+listener = Listener('./audios/wav/mulher_1.wav')
             <listener.Listener object at 0x105ccc350>
 
         Args:
@@ -29,9 +29,11 @@ class Listener(object):
             audio_data(array): Receive the audio array data from
                 get_audio_data funtion.
     """
+
     def __init__(self, file_name):
-        self.audio_data = self.get_audio_data(file_name)
-        self.duration = self.get_duration(file_name)
+        self.file_name = file_name
+        self.audio_data = self.get_audio_data()
+        self.duration = self.get_duration()
         self.iq1 = np.percentile(self.audio_data, q=25)
         self.iq3 = np.percentile(self.audio_data, q=75)
         self.median = np.percentile(self.audio_data, q=50)
@@ -43,12 +45,12 @@ class Listener(object):
         self.meanfun = np.mean(fft(self.audio_data))
         self.minfun = np.amin(fft(self.audio_data))
         self.minfreq = np.amin(self.audio_data)
-        self.peak = self.get_peak_frequency(file_name)
+        self.peak = self.get_peak_frequency()
         self.skew = skew(abs(self.audio_data))
         self.centroid = self.get_centroid()
         self.std = np.std(self.audio_data)
 
-    def get_audio_data(self, file_name):
+    def get_audio_data(self):
         """Get data from an audio file with .wav extension.
 
         Args:
@@ -61,10 +63,10 @@ class Listener(object):
         Return:
             data(array): Data read from wav file.
         """
-        rate, data = wav.read(file_name)
+        rate, data = wav.read(self.file_name)
         return data
 
-    def get_duration(self, file_name):
+    def get_duration(self):
         """Get the duration of audio in seconds
 
         Args:
@@ -78,18 +80,18 @@ class Listener(object):
         Return:
             Duration of audio file in seconds
         """
-        with contextlib.closing(wave.open(file_name, 'r')) as f:
+        with contextlib.closing(wave.open(self.file_name, 'r')) as f:
             frames = f.getnframes()
             rate = f.getframerate()
             duration = frames / float(rate)
             return duration
 
-    def get_peak_frequency(self, file_name):
+    def get_peak_frequency(self):
         """
         https://stackoverflow.com/questions/37813059/i-am-getting-peak-
         frequency-from-wav-file-but-for-recorded-2-channels-wav-it-is#answer-37855872
         """
-        fname = file_name
+        fname = self.file_name
         wav_file = wave.open(fname, 'r')
         self.frate = wav_file.getframerate()
         data_size = wav_file.getnframes()
@@ -112,8 +114,7 @@ class Listener(object):
         freqs = np.fft.fftfreq(len(data), 1. / self.frate)[:freq_nq]
         return freqs[np.argmax(x)]
 
-    def get_centroid(self, file_name):
-        self.audio_data
+    def get_centroid(self):
         """
         Compute the spectral centroid.
         Characterizes the "center of gravity" of the spectrum.
@@ -124,9 +125,8 @@ class Listener(object):
         numerator = 0
         denominator = 0
 
-        for bin in self:
-            # Compute center frequency
-            f = (self.audio_data / 2.0) / len(self)
+        for bin in self.audio_data:
+            f = (self.frate / 2.0) / len(self.audio_data)
             f = f * binNumber
 
             numerator = numerator + (f * abs(bin))
@@ -145,4 +145,5 @@ class Listener(object):
         Todo:
             Make this function
         """
+        # print(self)
         pass

@@ -53,6 +53,7 @@ class Listener(object):
         self.minfreq = np.amin(self.audio_data)
         self.peak = self.get_peak_frequency(file_name)
         self.skew = skew(abs(self.audio_data))
+        self.centroid = self.get_centroid()
 
     def get_audio_data(self, file_name):
         """Get data from an audio file with .wav extension.
@@ -97,7 +98,7 @@ class Listener(object):
         """
         fname = file_name
         wav_file = wave.open(fname, 'r')
-        frate = wav_file.getframerate()
+        self.frate = wav_file.getframerate()
         data_size = wav_file.getnframes()
         data = wav_file.readframes(data_size)
         nChannels = wav_file.getnchannels()
@@ -115,8 +116,12 @@ class Listener(object):
         # and now the same way as above as said by maxpowers
         freq_nq = len(data) // 2
         x = abs(np.fft.fft(data))[:freq_nq] / len(data) * 2
-        freqs = np.fft.fftfreq(len(data), 1. / frate)[:freq_nq]
+        freqs = np.fft.fftfreq(len(data), 1. / self.frate)[:freq_nq]
         return freqs[np.argmax(x)]
+
+    def get_centroid(self):
+        self.audio_data
+        pass
 
     def save_into_csv(self):
         """Function to save information from audio to .csv file

@@ -17,14 +17,6 @@ class Listener(object):
                        dtype=int16),
                        count=array([[2074, 2074]]))
 
-            Skewness:
-                - Se v>0, então a distribuição tem uma cauda direita
-                    (valores acima da média) mais pesada.
-                - Se v<0, então a distribuição tem uma cauda esquerda
-                    (valores abaixo da média) mais pesada.
-                - Se v=0, então a distribuição é aproximadamente simétrica
-                    (na terceira potência do desvio em relação à média).
-
         Example:
             from listener import Listener
             listener = Listener('./audios/wav/mulher_1.wav')
@@ -54,6 +46,7 @@ class Listener(object):
         self.peak = self.get_peak_frequency(file_name)
         self.skew = skew(abs(self.audio_data))
         self.centroid = self.get_centroid()
+        self.std = np.std(self.audio_data)
 
     def get_audio_data(self, file_name):
         """Get data from an audio file with .wav extension.
@@ -119,9 +112,29 @@ class Listener(object):
         freqs = np.fft.fftfreq(len(data), 1. / self.frate)[:freq_nq]
         return freqs[np.argmax(x)]
 
-    def get_centroid(self):
+    def get_centroid(self, file_name):
         self.audio_data
-        pass
+        """
+        Compute the spectral centroid.
+        Characterizes the "center of gravity" of the spectrum.
+        Approximately related to timbral "brightness"
+        """
+        binNumber = 0
+
+        numerator = 0
+        denominator = 0
+
+        for bin in self:
+            # Compute center frequency
+            f = (self.audio_data / 2.0) / len(self)
+            f = f * binNumber
+
+            numerator = numerator + (f * abs(bin))
+            denominator = denominator + abs(bin)
+
+            binNumber = binNumber + 1
+
+        return (numerator * 1.0) / denominator
 
     def save_into_csv(self):
         """Function to save information from audio to .csv file

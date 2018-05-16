@@ -1,10 +1,14 @@
-# import matplotlib.pyplot as plt
+import contextlib
+import csv
+import os.path
+import subprocess
+import wave
+
 from scipy.io import wavfile as wav
 from scipy.fftpack import fft
 from scipy.stats import kurtosis, skew
+# import matplotlib.pyplot as plt
 import numpy as np
-import wave
-import contextlib
 
 
 class Listener(object):
@@ -18,8 +22,8 @@ class Listener(object):
                        count=array([[2074, 2074]]))
 
         Example:
-from listener import Listener
-listener = Listener('./audios/wav/mulher_1.wav')
+            from listener import Listener
+            listener = Listener('./audios/wav/mulher_1.wav')
             <listener.Listener object at 0x105ccc350>
 
         Args:
@@ -33,22 +37,23 @@ listener = Listener('./audios/wav/mulher_1.wav')
     def __init__(self, file_name):
         self.file_name = file_name
         self.audio_data = self.get_audio_data()
-        self.duration = self.get_duration()
-        self.iq1 = np.percentile(self.audio_data, q=25)
-        self.iq3 = np.percentile(self.audio_data, q=75)
-        self.median = np.percentile(self.audio_data, q=50)
+        self.duration = float(self.get_duration())
+        self.iq1 = float(np.percentile(self.audio_data, q=25))
+        self.iq3 = float(np.percentile(self.audio_data, q=75))
+        self.median = float(np.percentile(self.audio_data, q=50))
+        self.kurtosis = float(kurtosis(self.audio_data)[0])
         self.label = 'homem' if 'homem' in file_name else 'mulher'
-        self.kurtosis = kurtosis(self.audio_data)
-        self.maxfun = np.amax(fft(self.audio_data))
-        self.maxfreq = np.amax(self.audio_data)
-        self.meanfreq = np.mean(self.audio_data)
-        self.meanfun = np.mean(fft(self.audio_data))
-        self.minfun = np.amin(fft(self.audio_data))
-        self.minfreq = np.amin(self.audio_data)
+        self.maxfun = complex(np.amax(fft(self.audio_data))).real
+        self.maxfreq = float(np.amax(self.audio_data))
+        self.meanfreq = float(np.mean(self.audio_data))
+        self.meanfun = complex(np.mean(fft(self.audio_data))).real
+        self.minfun = complex(np.amin(fft(self.audio_data))).real
+        self.minfreq = float(np.amin(self.audio_data))
         self.peak = self.get_peak_frequency()
-        self.skew = skew(abs(self.audio_data))
-        self.centroid = self.get_centroid()
-        self.std = np.std(self.audio_data)
+        self.skew = float(skew(abs(self.audio_data))[0])
+        self.centroid = complex(self.get_centroid()[0]).real
+        self.std = float(np.std(self.audio_data))
+        self.save_into_csv()
 
     def get_audio_data(self):
         """Get data from an audio file with .wav extension.
@@ -125,12 +130,12 @@ listener = Listener('./audios/wav/mulher_1.wav')
         numerator = 0
         denominator = 0
 
-        for bin in self.audio_data:
+        for _bin in self.audio_data:
             f = (self.frate / 2.0) / len(self.audio_data)
             f = f * binNumber
 
-            numerator = numerator + (f * abs(bin))
-            denominator = denominator + abs(bin)
+            numerator = numerator + (f * abs(_bin))
+            denominator = denominator + abs(_bin)
 
             binNumber = binNumber + 1
 
@@ -145,5 +150,30 @@ listener = Listener('./audios/wav/mulher_1.wav')
         Todo:
             Make this function
         """
-        # print(self)
-        pass
+
+        file_exists = os.path.isfile('./data.csv')
+
+        with open('./data.csv', 'a') as csvfile:
+            headers = [key for key in self.__dict__.keys(
+            ) if key is not 'file_name' or not 'audio_data']
+
+            self_dictionary = self.__dict__
+            del self_dictionary['file_name']
+            del self_dictionary['audio_data']
+            writer = csv.DictWriter(csvfile,
+                                    delimiter=',',
+                                    lineterminator='\n',
+                                    fieldnames=headers)
+            if not file_exists:
+                writer.writeheader()
+
+            writer.writerow(self_dictionary)
+
+
+if __name__ == '__main__':
+    directory = './audios/wav/'
+    folder = subprocess.check_output(['ls', directory]).split('\n')
+    folder.remove('')
+    for index, audio in enumerate(folder):
+        print("audio: {} {}/{}".format(audio, index, len(folder)))
+        listener = Listener("{}{}".format(directory, audio))

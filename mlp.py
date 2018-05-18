@@ -1,88 +1,127 @@
-from __future__ import print_function
+import csv
 
-import tensorflow as tf
-# Import MNIST data
-from tensorflow.examples.tutorials.mnist import input_data
-mnist = input_data.read_data_sets("./data.csv", one_hot=True)
+import numpy as np
+import pandas
 
 
-# Parameters
-learning_rate = 0.01
-training_epochs = 17
-batch_size = 100
-display_step = 1
-
-# Network Parameters
-n_hidden_1 = 17  # 1st layer number of neurons
-n_hidden_2 = 256  # 2nd layer number of neurons
-n_input = 17  # MNIST data input (img shape: 28*28)
-n_classes = 2  # MNIST total classes (0-9 digits)
-
-# tf Graph input
-X = tf.placeholder("float", [None, n_input])
-Y = tf.placeholder("float", [None, n_classes])
-
-# Store layers weight & bias
-weights = {
-    'h1': tf.Variable(tf.random_normal([n_input, n_hidden_1])),
-    'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
-    'out': tf.Variable(tf.random_normal([n_hidden_2, n_classes]))
-}
-biases = {
-    'b1': tf.Variable(tf.random_normal([n_hidden_1])),
-    'b2': tf.Variable(tf.random_normal([n_hidden_2])),
-    'out': tf.Variable(tf.random_normal([n_classes]))
-}
+def f(net):
+    return (1 / (1 + np.exp(-net)))
 
 
-# Create model
-def multilayer_perceptron(x):
-    # Hidden fully connected layer with 256 neurons
-    layer_1 = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
-    # Hidden fully connected layer with 256 neurons
-    layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
-    # Output fully connected layer with a neuron for each class
-    out_layer = tf.matmul(layer_2, weights['out']) + biases['out']
-    return out_layer
+def df_dnet(f_net):
+    return (f_net * (1 - f_net))
 
 
-# Construct model
-logits = multilayer_perceptron(X)
+def architecture(input_length=2,
+                 hidden_length=2,
+                 output_length=1,
+                 activation=f,
+                 d_activation=df_dnet):
 
-# Define loss and optimizer
-loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-    logits=logits, labels=Y))
-optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
-train_op = optimizer.minimize(loss_op)
-# Initializing the variables
-init = tf.global_variables_initializer()
+    model = dict()
+    model['input_length'] = input_length
+    model['hidden_length'] = hidden_length
+    model['output_length'] = output_length
 
-with tf.Session() as sess:
-    sess.run(init)
+    model['hidden'] = np.random.uniform(
+        low=-0.5,
+        high=0.5,
+        size=(hidden_length,
+              input_length + 1))
 
-    # Training cycle
-    for epoch in range(training_epochs):
-        avg_cost = 0.
-        total_batch = int(mnist.train.num_examples / batch_size)
-        # Loop over all batches
-        for i in range(total_batch):
-            batch_x, batch_y = mnist.train.next_batch(batch_size)
-            # Run optimization op (backprop) and cost op (to get loss value)
-            _, c = sess.run([train_op, loss_op], feed_dict={X: batch_x,
-                                                            Y: batch_y})
-            # Compute average loss
-            avg_cost += c / total_batch
-        # Display logs per epoch step
-        if epoch % display_step == 0:
-            print(
-                "Epoch:", '%04d' %
-                (epoch + 1), "cost={:.9f}".format(avg_cost))
-    print("Optimization Finished!")
+    model['output'] = np.random.uniform(
+        low=-0.5,
+        high=0.5,
+        size=(output_length,
+              hidden_length + 1))
+    model['f'] = activation
+    model['df_dnet'] = d_activation
 
-    # Test model
-    pred = tf.nn.softmax(logits)  # Apply softmax to logits
-    correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
-    # Calculate accuracy
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-    print("Accuracy:", accuracy.eval(
-        {X: mnist.test.images, Y: mnist.test.labels}))
+    return model
+
+# XOR
+# 0 0 0
+# 0 1 1
+# 1 0 1
+# 1 1 0
+
+# Xp = [0, 1]
+
+
+def forward(model, Xp):
+    # Hidden layer
+    net_h_p = np.dot(
+        np.asarray(model['hidden']),
+        np.append(np.asarray(Xp), 1))
+    f_net_h_p = model['f'](net_h_p)
+
+    # Output layer
+    net_o_p = np.dot(
+        model['output'],
+        np.append(np.asarray(f_net_h_p), 1))
+    f_net_o_p = model['f'](net_o_p)
+
+    result = dict()
+    result['net_h_p'] = net_h_p
+    result['net_o_p'] = net_o_p
+    result['f_net_h_p'] = f_net_h_p
+    result['f_net_o_p'] = f_net_o_p
+
+    return result
+
+
+def backpropagation(model,
+                    dataset,
+                    eta=0.1,
+                    threshold=1e-3):
+
+    squaredError = 2 * threshold
+    counter = 0
+
+    while(squaredError > threshold):
+        squaredError = 0
+        dataset = pandas.read_csv("teste.csv").values
+        for row in dataset:
+            Xp = row[:model['input_length']]
+            Yp = row[model['input_length']:]
+            results = forward(model, Xp)
+            Op = results['f_net_o_p']
+
+            # Calculando erro
+            error = Yp - Op
+
+            squaredError = squaredError + sum(error**2)
+
+            delta_o_p = error * model['df_dnet'](results['f_net_o_p'])
+            w_o_k_j = model['output'][:model['hidden_length']]
+            delta_h_p = model['df_dnet'](results['f_net_h_p']) * \
+                np.matmul(delta_o_p, w_o_k_j)[:model['hidden_length']]
+            import pdb; pdb.set_trace()
+            model['output'] = (model['output'] + eta)[0] * \
+                np.append(results['f_net_h_p'], 1) * delta_o_p
+            model['hidden'] = model['hidden'] + eta * np.dot(np.transpose(delta_h_p), np.append(Xp, 1))
+            squaredError = squaredError / len(dataset)
+
+            print(squaredError)
+
+            counter += 1
+
+    ret = dict()
+    ret['model'] = model
+    ret['counter'] = counter
+
+    return ret
+
+'''
+
+from mlp import architecture as a
+from mlp import forward as f
+from mlp import backpropagation as b
+
+model = a(hidden_length=2)
+f(model=model, Xp=[0,1])
+
+b(model=model, dataset="teste.csv")
+
+
+'''

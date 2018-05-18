@@ -2,16 +2,19 @@
 # -*- coding: utf-8 -*-
 import csv
 import sys
-sys.path.append('../kNN')
+sys.path.append('../models/kNN')
+sys.path.append('../LVQ')
+from lvq import LVQ
 from knn import KNN
+
 
 
 class CrossValidation(object):
     """Técnica para avaliar a capacidade de generalização de um modelo."""
-    def __init__(self, file_name, iter_count=0, metric=-1, skippable_indexes=[0]):
+    def __init__(self, file_obj, iter_count=0, metric=-1, skippable_indexes=[0], method='kNN'):
         """
         Args:
-            file_name (str): Nome do arquivo gerado após o tratamento e
+            file_name (obj): Nome do arquivo gerado após o tratamento e
                 processamento dos dados.
             iter_count (int): ...
 
@@ -22,10 +25,12 @@ class CrossValidation(object):
 
         """
         self.data_set = []
-        self.__set_data(file_name)
+        self.__set_data(file_obj.get('name'))
         self.iter_count = iter_count
         self.classes = None
+        self.file_obj = file_obj
         self.matrix = None
+        self.method = method
         self.metric_column = metric if metric is not None else -1
         self.skippable_indexes = skippable_indexes if skippable_indexes is not None else [0]
 
@@ -46,7 +51,7 @@ class CrossValidation(object):
                 determinado arquivo passado como parâmetro.
 
         """
-        with open('./../../resources/spreadsheets/result/{}'.format(
+        with open('./../../resources/spreadsheets/result/{}.csv'.format(
                 file_name)) as csv_file:
             lines = csv.reader(csv_file, delimiter=';')
             [(lambda x: self.data_set.append(x))(line) for line in lines]
@@ -107,10 +112,13 @@ class CrossValidation(object):
                         file_lenght += 1
                         if line[self.metric_column] not in self.classes:
                             self.classes.append(line[self.metric_column])
-            knn_obj = KNN(
-                self.__get_neighbour_qtd(
-                    self.iter_count, file_lenght), trainning)
-
+            if self.method == 'kNN':
+                knn_obj = KNN(
+                    self.__get_neighbour_qtd(
+                        self.iter_count, file_lenght), trainning)
+            elif self.method == 'LVQ':
+                lvq_obj = LVQ(trainning, self.file_obj.get('classes_qtd'), 1, self.file_obj.get('attr_qtd'), self.file_obj.get('skippable') or [], self.file_obj.get('metric') or -1)
+                print(lvq_obj.train())
             for jndex, test in enumerate(test_fold):
                 knn_obj.find_knn(test, metric=self.metric_column, skippable_indexes=self.skippable_indexes)
                 test_predict = knn_obj.get_prediction()
@@ -227,7 +235,7 @@ if __name__ == '__main__':
     #     'winequality-red', 'winequality-white'
     # ]
     files = [
-        { 'name': 'iris' }
+        {'name': 'iris_result', 'skippable': [5, 0], 'attr_qtd': 6, 'classes_qtd': 3}
         # { 'name': 'wine', 'metric': 1 },
         # { 'name': 'winequality-red', 'skip': []},
         # { 'name': 'abalone' },
@@ -237,7 +245,7 @@ if __name__ == '__main__':
     ]
     for file_info in files:
         for i in range(4):
-            cv = CrossValidation('%s_result.csv' % file_info.get('name'), i, file_info.get('metric'), file_info.get('skip'))
+            cv = CrossValidation(file_info, i, file_info.get('metric'), file_info.get('skippable'), 'LVQ')
             errors = cv.k_fold(10)
             print('CVE: %.5lf' % cross_validation_error(errors))
             with open('./../../resources/spreadsheets/result/%s_matrix.txt' % file_info.get('name'), 'a') as _file:

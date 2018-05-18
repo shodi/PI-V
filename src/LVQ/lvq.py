@@ -5,9 +5,9 @@ import random
 import math
 
 class LVQ(object):
-    def __init__(self, data_set, data_set_size, classes_qtd, radius, qtd_attr, skippable_indexes=[], metric=-1):
+    def __init__(self, data_set, classes_qtd, radius, qtd_attr, skippable_indexes=[], metric=-1):
         self.data_set = data_set
-        self.data_set_size = data_set_size
+        self.data_set_size = len(data_set)
         self.classes_qtd = classes_qtd
         self.desvio_padrao = radius
         # self.const_t1 = 1000 / math.log(self.desvio_padrao)
@@ -88,5 +88,5 @@ if __name__ == '__main__':
                     aux.append(float(attr))
                 data_set.append(aux)
                 data_set_size += 1
-            lvq = LVQ(data_set, data_set_size, _file.get('classes_qtd'), 1, _file.get('attr_qtd'), _file.get('skippable') or [], _file.get('metric') or -1)
+            lvq = LVQ(data_set, _file.get('classes_qtd'), 1, _file.get('attr_qtd'), _file.get('skippable') or [], _file.get('metric') or -1)
             print(lvq.train())

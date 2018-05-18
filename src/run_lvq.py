@@ -10,6 +10,5 @@ if __name__ == '__main__':
             lines = csv.reader(csv_file, delimiter=';')
             lasso = linear_model.Lasso()
             data = []
-            target = []
             [(lambda x: data.append(x))(line) for line in lines]
-            cv_result = cross_validate(lasso, data, target, cv=10)
+            cv_result = cross_validate(lasso, data, y=data, cv=10)

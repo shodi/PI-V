@@ -1,103 +1,88 @@
-import csv
+from __future__ import print_function
 
-import numpy as np
-import pandas
-
-
-def f(net):
-    return (1 / (1 + np.exp(-net)))
+import tensorflow as tf
+# Import MNIST data
+from tensorflow.examples.tutorials.mnist import input_data
+mnist = input_data.read_data_sets("./data.csv", one_hot=True)
 
 
-def df_dnet(f_net):
-    return (f_net * (1 - fnet))
+# Parameters
+learning_rate = 0.01
+training_epochs = 17
+batch_size = 100
+display_step = 1
+
+# Network Parameters
+n_hidden_1 = 17  # 1st layer number of neurons
+n_hidden_2 = 256  # 2nd layer number of neurons
+n_input = 17  # MNIST data input (img shape: 28*28)
+n_classes = 2  # MNIST total classes (0-9 digits)
+
+# tf Graph input
+X = tf.placeholder("float", [None, n_input])
+Y = tf.placeholder("float", [None, n_classes])
+
+# Store layers weight & bias
+weights = {
+    'h1': tf.Variable(tf.random_normal([n_input, n_hidden_1])),
+    'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
+    'out': tf.Variable(tf.random_normal([n_hidden_2, n_classes]))
+}
+biases = {
+    'b1': tf.Variable(tf.random_normal([n_hidden_1])),
+    'b2': tf.Variable(tf.random_normal([n_hidden_2])),
+    'out': tf.Variable(tf.random_normal([n_classes]))
+}
 
 
-def architecture(input_length=2,
-                 hidden_length=2,
-                 output_length=1,
-                 activation=f,
-                 d_activation=df_dnet):
-
-    model = dict()
-    model['input_length'] = input_length
-    model['hidden_length'] = hidden_length
-    model['output_length'] = output_length
-
-    model['hidden'] = np.random.uniform(
-        low=-0.5,
-        high=0.5,
-        size=(hidden_length,
-              input_length + 1))
-
-    model['output'] = np.random.uniform(
-        low=-0.5,
-        high=0.5,
-        size=(output_length,
-              hidden_length + 1))
-    model['f'] = activation
-    model['df_dnet'] = d_activation
-
-    return model
-
-# XOR
-# 0 0 0
-# 0 1 1
-# 1 0 1
-# 1 1 0
-
-# Xp = [0, 1]
+# Create model
+def multilayer_perceptron(x):
+    # Hidden fully connected layer with 256 neurons
+    layer_1 = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
+    # Hidden fully connected layer with 256 neurons
+    layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
+    # Output fully connected layer with a neuron for each class
+    out_layer = tf.matmul(layer_2, weights['out']) + biases['out']
+    return out_layer
 
 
-def forward(model, Xp):
-    # Hidden layer
-    net_h_p = np.dot(
-        np.asarray(model['hidden']),
-        np.append(np.asarray(Xp), 1))
-    f_net_h_p = model['f'](net_h_p)
+# Construct model
+logits = multilayer_perceptron(X)
 
-    # Output layer
-    net_o_p = np.dot(
-        model['output'],
-        np.append(np.asarray(f_net_h_p), 1))
-    f_net_o_p = model['f'](net_o_p)
+# Define loss and optimizer
+loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
+    logits=logits, labels=Y))
+optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
+train_op = optimizer.minimize(loss_op)
+# Initializing the variables
+init = tf.global_variables_initializer()
 
-    result = dict()
-    result['net_h_p'] = net_h_p
-    result['net_o_p'] = net_o_p
-    result['f_net_h_p'] = f_net_h_p
-    result['f_net_o_p'] = f_net_o_p
+with tf.Session() as sess:
+    sess.run(init)
 
-    return result
+    # Training cycle
+    for epoch in range(training_epochs):
+        avg_cost = 0.
+        total_batch = int(mnist.train.num_examples / batch_size)
+        # Loop over all batches
+        for i in range(total_batch):
+            batch_x, batch_y = mnist.train.next_batch(batch_size)
+            # Run optimization op (backprop) and cost op (to get loss value)
+            _, c = sess.run([train_op, loss_op], feed_dict={X: batch_x,
+                                                            Y: batch_y})
+            # Compute average loss
+            avg_cost += c / total_batch
+        # Display logs per epoch step
+        if epoch % display_step == 0:
+            print(
+                "Epoch:", '%04d' %
+                (epoch + 1), "cost={:.9f}".format(avg_cost))
+    print("Optimization Finished!")
 
-
-def backpropagation(model,
-                    dataset,
-                    eta=0.1,
-                    threshold=1e-3):
-
-    squaredError = 2 * threshold
-    counter = 0
-
-    while(squaredError > threshold):
-        squaredError = 0
-        pandas.read("teste.csv")
-        Xp = pandas.read_csv("teste.csv").iloc[:, 1:3].values
-        Yp = pandas.read_csv("teste.csv").iloc[:, -1].values
-
-        results = forward(model, Xp)
-        Op = results['f_net_o_p']
-
-        # Calculando erro
-        error = Yp - Op
-
-        squaredError = squaredError + sum(error**2)
-
-'''
-
-from mlp import architecture as a
-from mlp import forward as f
-
-model = a(hidden_length=3)
-f(model=model, Xp=[0,1])
-
-'''
+    # Test model
+    pred = tf.nn.softmax(logits)  # Apply softmax to logits
+    correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(Y, 1))
+    # Calculate accuracy
+    accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+    print("Accuracy:", accuracy.eval(
+        {X: mnist.test.images, Y: mnist.test.labels}))

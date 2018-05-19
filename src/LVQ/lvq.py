@@ -59,9 +59,9 @@ class LVQ(object):
         if bmu[self.metric] is None:
             bmu[self.metric] = row[self.metric]
         elif bmu[self.metric] == row[self.metric]:
-            bmu[index] = bmu[index] + (rate * (row[index] - bmu[index]))
+            bmu[index] = bmu[index] + (rate * (float(row[index]) - float(bmu[index])))
         elif bmu[self.metric] != row[self.metric]:
-            bmu[index] = bmu[index] - (rate * (row[index] - bmu[index]))
+            bmu[index] = bmu[index] - (rate * (float(row[index]) - float(bmu[index])))
             bmu[self.metric] = row[self.metric]
 
     def euclidean_distance(self, p, q):

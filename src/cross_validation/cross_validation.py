@@ -118,10 +118,15 @@ class CrossValidation(object):
                         self.iter_count, file_lenght), trainning)
             elif self.method == 'LVQ':
                 lvq_obj = LVQ(trainning, self.file_obj.get('classes_qtd'), 1, self.file_obj.get('attr_qtd'), self.file_obj.get('skippable') or [], self.file_obj.get('metric') or -1)
-                print(lvq_obj.train())
+                matrix = lvq_obj.train()
             for jndex, test in enumerate(test_fold):
-                knn_obj.find_knn(test, metric=self.metric_column, skippable_indexes=self.skippable_indexes)
-                test_predict = knn_obj.get_prediction()
+                if self.method == 'kNN':
+                    knn_obj.find_knn(test, metric=self.metric_column, skippable_indexes=self.skippable_indexes)
+                    test_predict = knn_obj.get_prediction()
+                elif self.method == 'LVQ':
+                    help_obj = KNN(1, matrix)
+                    help_obj.find_knn(test, metric=self.metric_column, skippable_indexes=self.skippable_indexes)
+                    test_predict = help_obj.get_prediction()
                 if str(index) not in hits:
                     length = len(self.classes)
                     hits[str(index)] = [[0 for x in range(length)] for y in range(length)]
@@ -129,8 +134,6 @@ class CrossValidation(object):
                     predicted_class = self.get_class_int_value(test_predict['class'])
                     real_class = self.get_class_int_value(float(test_fold[jndex][self.metric_column]))
                     hits[str(index)][real_class][predicted_class] += 1
-                # if test_predict['class'] == float(test_fold[jndex][self.metric_column]):
-                #     hits[str(index)] += 1
                 aux += 1
             qtty_test = len(test_fold)
             qtty_correct = 0

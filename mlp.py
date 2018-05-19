@@ -72,7 +72,7 @@ def forward(model, Xp):
 
 def backpropagation(model,
                     dataset,
-                    eta=0.1,
+                    eta=0.5,
                     threshold=1e-3):
 
     squaredError = 2 * threshold
@@ -93,18 +93,18 @@ def backpropagation(model,
             squaredError = squaredError + sum(error**2)
 
             delta_o_p = error * model['df_dnet'](results['f_net_o_p'])
-            w_o_k_j = model['output'][:model['hidden_length']]
+            w_o_k_j = np.squeeze(model['output'])[:model['hidden_length']]
             delta_h_p = model['df_dnet'](results['f_net_h_p']) * \
-                np.matmul(delta_o_p, w_o_k_j)[:model['hidden_length']]
-            import pdb; pdb.set_trace()
+                delta_o_p[0] * w_o_k_j
             model['output'] = (model['output'] + eta)[0] * \
                 np.append(results['f_net_h_p'], 1) * delta_o_p
-            model['hidden'] = model['hidden'] + eta * np.dot(np.transpose(delta_h_p), np.append(Xp, 1))
-            squaredError = squaredError / len(dataset)
+            model['hidden'] = model['hidden'] + eta * \
+                np.transpose(np.asmatrix(delta_h_p)) * np.append(Xp, 1)
+        squaredError = squaredError / len(dataset)
 
-            print(squaredError)
+        print(squaredError)
 
-            counter += 1
+        counter += 1
 
     ret = dict()
     ret['model'] = model

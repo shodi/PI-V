@@ -10,3 +10,11 @@ Para que você possa executar o programa corretamente é necessário que você p
 
 ### Como executar
 Criar o ambiente virtual (vide venv), e instalar as dependências. Executar `pip install -r requirements.txt` na raiz do projeto.
+
+### Executando mlp.r
+```
+source("mlp.r")
+dataset = read.csv('dataset.csv', header=F, skip=1)
+trained = mlp.backpropagation(dataset=dataset, model=model, eta=0.5)
+mlp.forward(model=trained$model, Xp=as.numeric(test[1,1:14]))
+```

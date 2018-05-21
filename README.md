@@ -15,6 +15,7 @@ Criar o ambiente virtual (vide venv), e instalar as dependências. Executar `pip
 ```
 source("mlp.r")
 dataset = read.csv('dataset.csv', header=F, skip=1)
+model = mlp.architecture(input.length=14, output.length=1, hidden.length=15)
 trained = mlp.backpropagation(dataset=dataset, model=model, eta=0.5)
 mlp.forward(model=trained$model, Xp=as.numeric(test[1,1:14]))
 ```

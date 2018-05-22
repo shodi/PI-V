@@ -53,7 +53,7 @@ mlp.forward <- function(model, Xp) {
 mlp.backpropagation <- function(model,
                                 dataset,
                                 eta=0.1,
-                                threshold=1e-3) {
+                                threshold=1e-4) {
 
     squaredError = 2 * threshold
     counter = 0

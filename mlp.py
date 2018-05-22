@@ -112,6 +112,7 @@ def backpropagation(model,
 
     return ret
 
+
 '''
 
 from mlp import architecture as a

@@ -204,4 +204,4 @@ if __name__ == '__main__':
     for index, audio in enumerate(folder):
         print("audio: {} {}/{}".format(audio, index, len(folder)))
         listener = Listener("{}{}".format(directory, audio))
-        normalize('data.csv')
+    normalize('data.csv')

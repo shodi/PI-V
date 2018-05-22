@@ -152,28 +152,56 @@ class Listener(object):
         """
 
         file_exists = os.path.isfile('./data.csv')
-
         with open('./data.csv', 'a') as csvfile:
             headers = [key for key in self.__dict__.keys(
-            ) if key is not 'file_name' or not 'audio_data']
+            ) if key not in ['file_name', 'audio_data']]
 
-            self_dictionary = self.__dict__
-            del self_dictionary['file_name']
-            del self_dictionary['audio_data']
+            del self.__dict__['file_name']
+            del self.__dict__['audio_data']
             writer = csv.DictWriter(csvfile,
                                     delimiter=',',
                                     lineterminator='\n',
                                     fieldnames=headers)
             if not file_exists:
                 writer.writeheader()
+            writer.writerow(self.__dict__)
 
-            writer.writerow(self_dictionary)
 
+def normalize(path):
+    obj = None
+    with open(path, 'rb') as csv_file:
+        file = csv.reader(csv_file, delimiter=',', lineterminator='\n')
+        for indx, row in enumerate(file):
+            for index, cell in enumerate(row):
+                if not indx:
+                    if not obj:
+                        writer.writerow(row)
+                        obj = [None for i in range(len(row))]
+                    obj[index] = {'header': cell, 'data': [], 'max': 0, 'min': 0}
+                else:
+                    data = float(cell)
+                    if data > obj[index]['max']:
+                        obj[index]['max'] = data
+                    elif data < obj[index]['min']:
+                        obj[index]['min'] = data
+                    obj[index]['data'].append(data)
+        for column in obj:
+            for item in column['data']:
+                difference = column['max'] - column['min']
+                if not difference:
+                    item = item
+                else:
+                    item = (item - column['min'])/(difference)
+            
+                        
+            
 
 if __name__ == '__main__':
     directory = './audios/wav/'
     folder = subprocess.check_output(['ls', directory]).split('\n')
     folder.remove('')
+    subprocess.call(['rm', 'data.csv'])
     for index, audio in enumerate(folder):
         print("audio: {} {}/{}".format(audio, index, len(folder)))
         listener = Listener("{}{}".format(directory, audio))
+        normalize('data.csv')

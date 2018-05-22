@@ -168,33 +168,37 @@ class Listener(object):
 
 
 def normalize(path):
-    obj = None
+    obj = []
+    min_and_max = []
     with open(path, 'rb') as csv_file:
         file = csv.reader(csv_file, delimiter=',', lineterminator='\n')
         for indx, row in enumerate(file):
+            if not indx:
+                min_and_max = [None for i in range(len(row))]
+                obj.append(row)
+                continue
             for index, cell in enumerate(row):
-                if not indx:
-                    if not obj:
-                        writer.writerow(row)
-                        obj = [None for i in range(len(row))]
-                    obj[index] = {'header': cell, 'data': [], 'max': 0, 'min': 0}
-                else:
-                    data = float(cell)
-                    if data > obj[index]['max']:
-                        obj[index]['max'] = data
-                    elif data < obj[index]['min']:
-                        obj[index]['min'] = data
-                    obj[index]['data'].append(data)
-        for column in obj:
-            for item in column['data']:
-                difference = column['max'] - column['min']
+                if not min_and_max[index]:
+                    min_and_max[index] = {'min': 0, 'max': 0}
+                value = float(cell)
+                if value < min_and_max[index]['min']:
+                    min_and_max[index]['min'] = value
+                elif value > min_and_max[index]['max']:
+                    min_and_max[index]['max'] = value
+            obj.append([(lambda x: float(x))(y) for y in row])
+    with open('__' + path, 'wb') as csv_writer:
+        writer = csv.writer(csv_writer, delimiter=',', lineterminator='\n')
+        for index, row in enumerate(obj):
+            if not index:
+                writer.writerow(row)
+                continue    
+            for idx, cell in enumerate(row):
+                difference = min_and_max[idx]['max'] - min_and_max[idx]['min']
                 if not difference:
-                    item = item
-                else:
-                    item = (item - column['min'])/(difference)
-            
-                        
-            
+                    continue
+                row[idx] = (row[idx] - min_and_max[idx]['min']) / difference
+            writer.writerow(row)
+
 
 if __name__ == '__main__':
     directory = './audios/wav/'

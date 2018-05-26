@@ -154,10 +154,11 @@ class Listener(object):
         file_exists = os.path.isfile('./data.csv')
         with open('./data.csv', 'a') as csvfile:
             headers = [key for key in self.__dict__.keys(
-            ) if key not in ['file_name', 'audio_data']]
+            ) if key not in ['file_name', 'audio_data', 'frate']]
 
             del self.__dict__['file_name']
             del self.__dict__['audio_data']
+            del self.__dict__['frate']
             writer = csv.DictWriter(csvfile,
                                     delimiter=',',
                                     lineterminator='\n',
@@ -191,7 +192,7 @@ def normalize(path):
         for index, row in enumerate(obj):
             if not index:
                 writer.writerow(row)
-                continue    
+                continue
             for idx, cell in enumerate(row):
                 difference = min_and_max[idx]['max'] - min_and_max[idx]['min']
                 if not difference:

@@ -14,8 +14,12 @@ Criar o ambiente virtual (vide venv), e instalar as dependências. Executar `pip
 ### Executando mlp.r
 ```
 source("mlp.r")
-dataset = read.csv('dataset.csv', header=F, skip=1)
-model = mlp.architecture(input.length=14, output.length=1, hidden.length=15)
-trained = mlp.backpropagation(dataset=dataset, model=model, eta=0.5)
-mlp.forward(model=trained$model, Xp=as.numeric(test[1,1:14]))
+dataset = read.csv('__data.csv', header=F, skip=1)
+dataset <- dataset[c(1,2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 8)]
+ids = sample(1:nrow(dataset), size=100)
+training = dataset[ids,]
+test = dataset[-ids,]
+model = mlp.architecture(input.length=15, output.length=1, hidden.length=16)
+trained = mlp.backpropagation(dataset=training, model=model, eta=0.5)
+mlp.forward(model=trained$model, Xp=as.numeric(test[1,1:15]))
 ```

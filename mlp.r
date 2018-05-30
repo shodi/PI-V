@@ -92,6 +92,7 @@ mlp.backpropagation <- function(model,
 
         counter = counter + 1
     }
+    cat("Base treinada Daniel, SEU GOSTOSO!")
     ret = list()
     ret$model = model
     ret$counter = counter

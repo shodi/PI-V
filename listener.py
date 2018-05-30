@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import contextlib
 import csv
 import os.path
@@ -9,6 +10,8 @@ from scipy.fftpack import fft
 from scipy.stats import kurtosis, skew
 # import matplotlib.pyplot as plt
 import numpy as np
+
+from audiotranscode import audiotranscode
 
 
 class Listener(object):
@@ -42,7 +45,7 @@ class Listener(object):
         self.iq3 = float(np.percentile(self.audio_data, q=75))
         self.median = float(np.percentile(self.audio_data, q=50))
         self.kurtosis = float(kurtosis(self.audio_data)[0])
-        self.label = 0 if 'homem' in file_name else 1
+        self.label = 1 if 'h' in file_name else 0
         self.maxfun = complex(np.amax(fft(self.audio_data))).real
         self.maxfreq = float(np.amax(self.audio_data))
         self.meanfreq = float(np.mean(self.audio_data))
@@ -191,7 +194,7 @@ def normalize(path):
         for index, row in enumerate(obj):
             if not index:
                 writer.writerow(row)
-                continue    
+                continue
             for idx, cell in enumerate(row):
                 difference = min_and_max[idx]['max'] - min_and_max[idx]['min']
                 if not difference:
@@ -201,7 +204,8 @@ def normalize(path):
 
 
 if __name__ == '__main__':
-    directory = './audios/wav/'
+    audiotranscode()
+    directory = './audios/wav/papibaquigrafo/'
     folder = subprocess.check_output(['ls', directory]).split('\n')
     folder.remove('')
     subprocess.call(['rm', 'data.csv'])

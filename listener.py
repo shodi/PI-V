@@ -209,14 +209,14 @@ def normalize(path):
 
 def execute_scripts():
     audiotranscode()
-    directory = './audios/wav/'
+    directory = './audios/wav/papibaquigrafo/'
     folder = subprocess.check_output(
         ['ls', directory]).decode("utf-8").split('\n')
     folder.remove('')
     subprocess.call(['rm', 'data.csv'])
     for index, audio in enumerate(folder):
         print("audio: {} {}/{}".format(audio, index, len(folder)))
-        Listener("{}{}".format(directory, audio), option="type")
+        Listener("{}{}".format(directory, audio), option="gender")
     normalize('data.csv')
 
 

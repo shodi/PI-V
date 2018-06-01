@@ -34,6 +34,7 @@ def architecture(input_length=2,
         high=0.5,
         size=(output_length,
               hidden_length + 1))
+
     model['f'] = activation
     model['df_dnet'] = d_activation
 
@@ -51,7 +52,7 @@ def architecture(input_length=2,
 def forward(model, Xp):
     # Hidden layer
     net_h_p = np.dot(
-        np.asarray(model['hidden']),
+        np.asmatrix(model['hidden']),
         np.append(np.asarray(Xp), 1))
     f_net_h_p = model['f'](net_h_p)
 
@@ -78,12 +79,21 @@ def backpropagation(model,
     squaredError = 2 * threshold
     counter = 0
 
+    dataset = pandas.read_csv("__data.csv")
+    dataset = dataset[['std', 'minfun', 'meanfun',
+                       'skew', 'maxfreq', 'iq1', 'iq3',
+                       'median', 'centroid', 'minfreq',
+                       'meanfreq', 'peak',
+                       'kurtosis', 'maxfun', 'label']]
+
+    dataset = dataset.values
+
     while(squaredError > threshold):
         squaredError = 0
-        dataset = pandas.read_csv("teste.csv").values
+
         for row in dataset:
             Xp = row[:model['input_length']]
-            Yp = row[model['input_length']:]
+            Yp = row[-2]
             results = forward(model, Xp)
             Op = results['f_net_o_p']
 
@@ -93,13 +103,18 @@ def backpropagation(model,
             squaredError = squaredError + sum(error**2)
 
             delta_o_p = error * model['df_dnet'](results['f_net_o_p'])
+
             w_o_k_j = np.squeeze(model['output'])[:model['hidden_length']]
-            delta_h_p = model['df_dnet'](results['f_net_h_p']) * \
+            delta_h_p = model['df_dnet'](
+                np.asarray(results['f_net_h_p']).reshape(-1)) * \
                 delta_o_p[0] * w_o_k_j
-            model['output'] = (model['output'] + eta)[0] * \
-                np.append(results['f_net_h_p'], 1) * delta_o_p
-            model['hidden'] = model['hidden'] + eta * \
-                np.transpose(np.asmatrix(delta_h_p)) * np.append(Xp, 1)
+
+            model['output'] = model['output'] + \
+                eta * np.dot(delta_o_p[0], np.append(np.asarray(
+                    results['f_net_h_p']).reshape(-1), 1))
+            model['hidden'] = model['hidden'] + eta * np.transpose(
+                np.asmatrix(delta_h_p)) * np.append(Xp, 1)
+
         squaredError = squaredError / len(dataset)
 
         print(squaredError)
@@ -119,10 +134,10 @@ from mlp import architecture as a
 from mlp import forward as f
 from mlp import backpropagation as b
 
-model = a(hidden_length=2)
+model = a(input_length=14, output_length=1, hidden_length=15)
 f(model=model, Xp=[0,1])
 
-b(model=model, dataset="teste.csv")
+b(model=model, dataset="__data.csv")
 
 
 '''

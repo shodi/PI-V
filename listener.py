@@ -37,15 +37,18 @@ class Listener(object):
                 get_audio_data funtion.
     """
 
-    def __init__(self, file_name):
+    def __init__(self, file_name, option):
         self.file_name = file_name
         self.audio_data = self.get_audio_data()
-        self.duration = float(self.get_duration())
+        # self.duration = float(self.get_duration())
         self.iq1 = float(np.percentile(self.audio_data, q=25))
         self.iq3 = float(np.percentile(self.audio_data, q=75))
         self.median = float(np.percentile(self.audio_data, q=50))
         self.kurtosis = float(kurtosis(self.audio_data)[0])
-        self.label = 1 if 'h' in file_name else 0
+        if option == "gender":
+            self.label = 1 if 'h' in file_name else 0
+        else:
+            self.label = 1 if 'p' in file_name else 0
         self.maxfun = complex(np.amax(fft(self.audio_data))).real
         self.maxfreq = float(np.amax(self.audio_data))
         self.meanfreq = float(np.mean(self.audio_data))
@@ -157,10 +160,11 @@ class Listener(object):
         file_exists = os.path.isfile('./data.csv')
         with open('./data.csv', 'a') as csvfile:
             headers = [key for key in self.__dict__.keys(
-            ) if key not in ['file_name', 'audio_data']]
+            ) if key not in ['file_name', 'audio_data', 'frate']]
 
             del self.__dict__['file_name']
             del self.__dict__['audio_data']
+            del self.__dict__['frate']
             writer = csv.DictWriter(csvfile,
                                     delimiter=',',
                                     lineterminator='\n',
@@ -203,13 +207,18 @@ def normalize(path):
             writer.writerow(row)
 
 
-if __name__ == '__main__':
+def execute_scripts():
     audiotranscode()
-    directory = './audios/wav/papibaquigrafo/'
-    folder = subprocess.check_output(['ls', directory]).split('\n')
+    directory = './audios/wav/'
+    folder = subprocess.check_output(
+        ['ls', directory]).decode("utf-8").split('\n')
     folder.remove('')
     subprocess.call(['rm', 'data.csv'])
     for index, audio in enumerate(folder):
         print("audio: {} {}/{}".format(audio, index, len(folder)))
-        listener = Listener("{}{}".format(directory, audio))
+        Listener("{}{}".format(directory, audio), option="type")
     normalize('data.csv')
+
+
+if __name__ == '__main__':
+    execute_scripts()

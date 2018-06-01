@@ -24,6 +24,8 @@ mlp.architecture <- function(input.length=2,
     model$output = matrix(runif(min=-0.5, max=0.5, 
             output.length*(hidden.length+1)), 
                    nrow=output.length, ncol=hidden.length+1)
+    print(model$hidden)
+    print(model$output)
 
     model$f = activation.function
     model$df_dnet = d_activation.function
@@ -52,11 +54,12 @@ mlp.forward <- function(model, Xp) {
 
 mlp.backpropagation <- function(model,
                                 dataset,
-                                eta=0.1,
+                                eta=0.5,
                                 threshold=1e-4) {
 
     squaredError = 2 * threshold
     counter = 0
+    x = 0
 
     while(squaredError > threshold) {
         squaredError = 0
@@ -73,7 +76,6 @@ mlp.backpropagation <- function(model,
             error = Yp - Op
 
             squaredError = squaredError + sum(error^2)
-
             delta_o_p = error * model$df_dnet(results$f_net_o_p)
         
             w_o_kj = model$output[,1:model$hidden.length]
@@ -81,18 +83,42 @@ mlp.backpropagation <- function(model,
                 as.numeric(model$df_dnet(results$f_net_h_p)) *
                     (as.numeric(delta_o_p) %*% w_o_kj)
 
+            cat('vamos: ')
+            print(model$output)
+            print(eta * (delta_o_p%*%as.vector(c(results$f_net_h_p,1))))
+            print(model$output + eta * (delta_o_p%*%as.vector(c(results$f_net_h_p,1))))
+            cat('\n\n')
             model$output = model$output +
                 eta*(delta_o_p%*%as.vector(c(results$f_net_h_p,1)))
             model$hidden = model$hidden +
                 eta*(t(delta_h_p) %*% as.vector(c(Xp,1)))
+            
+            cat("Xp ", Xp, "\n")
+            cat("Yp ", Yp, "\n")
+            print(results)
+            cat("Op ", Op, "\n")
+            cat("error ", error, "\n")
+            cat("squaredError ", squaredError, "\n")
+            cat("delta_o_p ", delta_o_p, "\n")
+            cat("w_o_kj ", w_o_kj, "\n")
+            print(delta_h_p)
+            print(model$output)
+            print(model$hidden)
+            cat("\n-----------------------------\n\n")
+
+            
+            break                
+            
+            x = x + 1
         }
         squaredError = squaredError / nrow(dataset)
 
         cat("Erro médio quadrado = ", squaredError, "\n")
 
         counter = counter + 1
+        break
     }
-    cat("Base treinada Daniel, SEU GOSTOSO!")
+    cat("Base treinada Daniel, SEU GOSTOSO!\n")
     ret = list()
     ret$model = model
     ret$counter = counter

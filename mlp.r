@@ -60,7 +60,7 @@ mlp.backpropagation <- function(model,
 
     while(squaredError > threshold) {
         squaredError = 0
-
+ 
         for (p in 1:nrow(dataset)) {
             Xp = as.numeric(dataset[p, 1:model$input.length])
             Yp = as.numeric(dataset[p,
@@ -102,11 +102,11 @@ mlp.backpropagation <- function(model,
 
 
 dataset = read.csv('__data.csv', header=F, skip=1)
-dataset <- dataset[c(1,2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 8)]
+dataset <- dataset[c(1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 8)]
 ids = sample(1:nrow(dataset), size=50)
 training = dataset[ids,]
 test = dataset[-ids,]
-model = mlp.architecture(input.length=14, output.length=1, hidden.length=15)
+model = mlp.architecture(input.length=15, output.length=1, hidden.length=16)
 trained = mlp.backpropagation(dataset=training, model=model, eta=0.5)
 write.csv(trained$model$hidden, file="hidden.csv", row.names=FALSE)
 write.csv(trained$model$output, file="output.csv", row.names=FALSE)

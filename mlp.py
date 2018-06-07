@@ -1,6 +1,6 @@
 import numpy as np
 import pandas
-
+import subprocess
 
 def f(net):
     return (1 / (1 + np.exp(-net)))
@@ -46,27 +46,6 @@ def architecture(input_length=2,
 
 # Xp = [0, 1]
 
-
-def forward(model, Xp):
-    # Hidden layer
-    net_h_p = np.dot(
-        np.asmatrix(model['hidden']),
-        np.append(np.asarray(Xp), 1))
-    f_net_h_p = model['f'](net_h_p)
-
-    # Output layer
-    net_o_p = np.dot(
-        model['output'],
-        np.append(np.asarray(f_net_h_p), 1))
-    f_net_o_p = model['f'](net_o_p)
-
-    result = dict()
-    result['net_h_p'] = net_h_p
-    result['net_o_p'] = net_o_p
-    result['f_net_h_p'] = f_net_h_p
-    result['f_net_o_p'] = f_net_o_p
-
-    return result
 
 
 def backpropagation(model,
@@ -117,8 +96,30 @@ def backpropagation(model,
     return ret
 
 
+def forward(hidden, output, Xp):
+    # Hidden layer
+    net_h_p = np.dot(
+        np.asmatrix(hidden),
+        np.append(np.asarray(Xp), 1))
+    f_net_h_p = f(net_h_p)
+
+    # Output layer
+    net_o_p = np.dot(
+        output,
+        np.append(np.asarray(f_net_h_p), 1))
+    f_net_o_p = f(net_o_p)
+
+    result = dict()
+    result['net_h_p'] = net_h_p
+    result['net_o_p'] = net_o_p
+    result['f_net_h_p'] = f_net_h_p
+    result['f_net_o_p'] = f_net_o_p
+
+    return result
+
+
 if __name__ == '__main__':
-    dataset = pandas.read_csv("__data.csv")
+    '''dataset = pandas.read_csv("__data.csv")
     dataset = dataset[['std', 'minfun', 'meanfun',
                        'skew', 'maxfreq', 'iq1', 'iq3',
                        'median', 'centroid', 'minfreq',
@@ -128,16 +129,18 @@ if __name__ == '__main__':
     dataset = dataset.values
     model = architecture(input_length=14, output_length=1, hidden_length=15)
     trained = backpropagation(model=model, dataset=dataset)
-    forward(model=trained['model'], Xp=dataset[0, 0:14])
+    print(dataset[0, 0:15])
+    print(forward(model=trained['model'], Xp=dataset[0, 0:14]))'''
+    dataset = pandas.read_csv("__data.csv")
+    dataset = dataset[['std', 'minfun', 'meanfun',
+                       'skew', 'maxfreq', 'iq1', 'iq3',
+                       'median', 'centroid', 'minfreq',
+                       'duration', 'meanfreq', 'peak',
+                       'kurtosis', 'maxfun', 'label']]
 
-
-'''
-
-from mlp import architecture as a
-from mlp import forward as f
-from mlp import backpropagation as b
-
-
-
-
-'''
+    dataset = dataset.values
+    hidden = pandas.read_csv("hidden.csv")
+    output = pandas.read_csv("output.csv")
+    import pdb; pdb.set_trace()
+    result = forward(hidden=hidden, output=output, Xp=dataset[0, 0:15])
+    pass

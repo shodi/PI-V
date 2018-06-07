@@ -53,7 +53,7 @@ mlp.forward <- function(model, Xp) {
 mlp.backpropagation <- function(model,
                                 dataset,
                                 eta=0.1,
-                                threshold=1e-3) {
+                                threshold=1e-4) {
 
     squaredError = 2 * threshold
     counter = 0
@@ -99,3 +99,14 @@ mlp.backpropagation <- function(model,
 
     return (ret)
 }
+
+
+dataset = read.csv('__data.csv', header=F, skip=1)
+dataset <- dataset[c(1,2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 8)]
+ids = sample(1:nrow(dataset), size=50)
+training = dataset[ids,]
+test = dataset[-ids,]
+model = mlp.architecture(input.length=14, output.length=1, hidden.length=15)
+trained = mlp.backpropagation(dataset=training, model=model, eta=0.5)
+write.csv(trained$model$hidden, file="hidden.csv", row.names=FALSE)
+write.csv(trained$model$output, file="output.csv", row.names=FALSE)

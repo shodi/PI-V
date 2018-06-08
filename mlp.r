@@ -92,7 +92,7 @@ mlp.backpropagation <- function(model,
 
         counter = counter + 1
     }
-    cat("Base treinada Daniel, SEU GOSTOSO!")
+    cat("Base treinada Daniel, SEU GOSTOSO!\n")
     ret = list()
     ret$model = model
     ret$counter = counter
@@ -101,7 +101,7 @@ mlp.backpropagation <- function(model,
 }
 
 
-dataset = read.csv('__data.csv', header=F, skip=1)
+dataset = read.csv('__dataset.csv', header=F, skip=1)
 dataset <- dataset[c(1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 8)]
 ids = sample(1:nrow(dataset), size=50)
 training = dataset[ids,]

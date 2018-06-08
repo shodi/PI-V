@@ -37,7 +37,7 @@ class Listener(object):
                 get_audio_data funtion.
     """
 
-    def __init__(self, file_name, option):
+    def __init__(self, file_name, option, save_into=None):
         self.file_name = file_name
         self.audio_data = self.get_audio_data()
         # self.duration = float(self.get_duration())
@@ -59,7 +59,7 @@ class Listener(object):
         self.skew = float(skew(abs(self.audio_data))[0])
         self.centroid = complex(self.get_centroid()[0]).real
         self.std = float(np.std(self.audio_data))
-        self.save_into_csv()
+        self.save_into_csv(save_into)
 
     def get_audio_data(self):
         """Get data from an audio file with .wav extension.
@@ -147,7 +147,7 @@ class Listener(object):
 
         return (numerator * 1.0) / denominator
 
-    def save_into_csv(self):
+    def save_into_csv(self, save_into):
         """Function to save information from audio to .csv file
 
         Args:
@@ -156,9 +156,14 @@ class Listener(object):
         Todo:
             Make this function
         """
+        if not save_into:
+            save_into = './data.csv'
+            save_type = 'a'
+        else:
+            save_type = 'w'
 
-        file_exists = os.path.isfile('./data.csv')
-        with open('./data.csv', 'a') as csvfile:
+        file_exists = os.path.isfile(save_into)
+        with open(save_into, save_type) as csvfile:
             headers = [key for key in self.__dict__.keys(
             ) if key not in ['file_name', 'audio_data', 'frate']]
 

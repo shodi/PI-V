@@ -157,7 +157,7 @@ class Listener(object):
             Make this function
         """
         if not save_into:
-            save_into = './data.csv'
+            save_into = './dataset.csv'
             save_type = 'a'
         else:
             save_type = 'w'
@@ -214,15 +214,16 @@ def normalize(path):
 
 def execute_scripts():
     audiotranscode()
+    # TODO: Mudar para diretorio apropriado
     directory = './audios/wav/papibaquigrafo/'
     folder = subprocess.check_output(
         ['ls', directory]).decode("utf-8").split('\n')
     folder.remove('')
-    subprocess.call(['rm', 'data.csv'])
+    subprocess.call(['rm', 'dataset.csv'])
     for index, audio in enumerate(folder):
         print("audio: {} {}/{}".format(audio, index, len(folder)))
         Listener("{}{}".format(directory, audio), option="gender")
-    normalize('data.csv')
+    normalize('dataset.csv')
 
 
 if __name__ == '__main__':

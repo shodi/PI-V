@@ -109,16 +109,5 @@ class CheckGender(object):
 
 
 if __name__ == '__main__':
-    '''dataset = pandas.read_csv("__data.csv")
-    dataset = dataset[['std', 'minfun', 'meanfun',
-                       'skew', 'maxfreq', 'iq1', 'iq3',
-                       'median', 'centroid', 'minfreq',
-                       'meanfreq', 'peak',
-                       'kurtosis', 'maxfun', 'label']]
-
-    dataset = dataset.values
-    model = architecture(input_length=14, output_length=1, hidden_length=15)
-    trained = backpropagation(model=model, dataset=dataset)
-    print(dataset[0, 0:15])
-    print(forward(model=trained['model'], Xp=dataset[0, 0:14]))'''
+    # TODO: Change file name
     x = CheckGender('cm_1.ogg')

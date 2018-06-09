@@ -113,4 +113,4 @@ class CheckGender(object):
 
 if __name__ == '__main__':
     # TODO: Change file name
-    x = CheckGender('cm_1.ogg')
+    x = CheckGender('cm_3.ogg')

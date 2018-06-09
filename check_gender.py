@@ -31,14 +31,12 @@ class CheckGender(object):
         # subprocess.call(['./ffmpeg_verify.sh'])
 
     def normalize(self, path, audio_data, received_data):
-        obj = []
         min_and_max = []
         with open(path, 'rb') as csv_file:
             file = csv.reader(csv_file, delimiter=',', lineterminator='\n')
             for indx, row in enumerate(file):
                 if not indx:
                     min_and_max = [None for i in range(len(row))]
-                    obj.append(row)
                     continue
                 for index, cell in enumerate(row):
                     if not min_and_max[index]:
@@ -48,6 +46,11 @@ class CheckGender(object):
                         min_and_max[index]['min'] = value
                     elif value > min_and_max[index]['max']:
                         min_and_max[index]['max'] = value
+
+        __class = min_and_max[min_and_max.index({'max': 1.0, 'min': 0})]
+        min_and_max.remove(__class)
+        min_and_max.insert(len(min_and_max), __class)
+
         normalize_data = []
         with open(received_data, 'rb') as csv_file:
             file = csv.reader(
@@ -110,4 +113,4 @@ class CheckGender(object):
 
 if __name__ == '__main__':
     # TODO: Change file name
-    x = CheckGender('ch_x.ogg')
+    x = CheckGender('cm_1.ogg')

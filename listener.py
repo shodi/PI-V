@@ -40,7 +40,7 @@ class Listener(object):
     def __init__(self, file_name, option, save_into=None):
         self.file_name = file_name
         self.audio_data = self.get_audio_data()
-        self.duration = float(self.get_duration())
+        # self.duration = float(self.get_duration())
         self.iq1 = float(np.percentile(self.audio_data, q=25))
         self.iq3 = float(np.percentile(self.audio_data, q=75))
         self.median = float(np.percentile(self.audio_data, q=50))
@@ -215,7 +215,7 @@ def normalize(path):
 def execute_scripts():
     audiotranscode()
     # TODO: Mudar para diretorio apropriado
-    directory = './audios/wav/outros/'
+    directory = './audios/wav/'
     folder = subprocess.check_output(
         ['ls', directory]).decode("utf-8").split('\n')
     folder.remove('')

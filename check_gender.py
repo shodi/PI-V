@@ -19,14 +19,14 @@ class CheckGender(object):
 
         try:
             # TODO: Mudar para diretorio apropriado
-            subprocess.call(['rm', "./audios/wav/{}".format(new_audio)])
+            subprocess.call(['rm', "./audios/{}".format(new_audio)])
         except Exception:
             pass
 
         subprocess.call(
             'ffmpeg -i {0} -ac 2 {1}'.format(old_audio, new_audio),
             shell=True,
-            cwd='./audios/wav')
+            cwd='./audios')
         return new_audio
         # subprocess.call(['./ffmpeg_verify.sh'])
 
@@ -65,7 +65,7 @@ class CheckGender(object):
 
     def get_audio_information(self, audio):
         # TODO: Mudar para diretorio apropriado
-        directory = './audios/wav/'
+        directory = './audios/'
         audio_data = Listener("{}{}".format(directory, audio),
                               option="gender",
                               save_into="./received_audio_data.csv")
@@ -101,16 +101,16 @@ class CheckGender(object):
         dataset = dataset[['std', 'minfun', 'meanfun',
                            'skew', 'maxfreq', 'iq1', 'iq3',
                            'median', 'centroid', 'minfreq',
-                           'duration', 'meanfreq', 'peak',
+                           'meanfreq', 'peak',
                            'kurtosis', 'maxfun', 'label']]
         dataset = dataset.values
         hidden = pandas.read_csv("hidden.csv")
         output = pandas.read_csv("output.csv")
         self.result = self.forward(
-            hidden=hidden, output=output, Xp=received_audio_data[0:15])
+            hidden=hidden, output=output, Xp=received_audio_data[0:14])
         print(self.result)
 
 
 if __name__ == '__main__':
     # TODO: Change file name
-    x = CheckGender('cm_3.ogg')
+    x = CheckGender('homem_1.ogg')

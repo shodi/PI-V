@@ -102,11 +102,11 @@ mlp.backpropagation <- function(model,
 
 
 dataset = read.csv('__dataset.csv', header=F, skip=1)
-dataset <- dataset[c(1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 8)]
-ids = sample(1:nrow(dataset), size=60)
+dataset <- dataset[c(1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 8)]
+ids = sample(1:nrow(dataset), size=33)
 training = dataset[ids,]
 test = dataset[-ids,]
-model = mlp.architecture(input.length=15, output.length=1, hidden.length=16)
+model = mlp.architecture(input.length=14, output.length=1, hidden.length=15)
 trained = mlp.backpropagation(dataset=training, model=model, eta=0.5)
 write.csv(trained$model$hidden, file="hidden.csv", row.names=FALSE)
 write.csv(trained$model$output, file="output.csv", row.names=FALSE)

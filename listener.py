@@ -45,10 +45,7 @@ class Listener(object):
         self.iq3 = float(np.percentile(self.audio_data, q=75))
         self.median = float(np.percentile(self.audio_data, q=50))
         self.kurtosis = float(kurtosis(self.audio_data)[0])
-        if option == "gender":
-            self.label = 1 if 'h' in file_name else 0
-        else:
-            self.label = 1 if 'p' in file_name else 0
+        self.label = 1 if 'homem' in file_name else 0
         self.maxfun = complex(np.amax(fft(self.audio_data))).real
         self.maxfreq = float(np.amax(self.audio_data))
         self.meanfreq = float(np.mean(self.audio_data))

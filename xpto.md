@@ -139,3 +139,5 @@ Simulando com os valores de entrada:
 Iluminação externa = 1.85 cd/m²     
 Sensibilidade do olho = 0.842 (alta)     
 Iluminação Interna = 1963 lux     
+![Drag Racing](semluz.gif)
+

@@ -135,9 +135,20 @@ A simulação é realizada na primeira pessoa e consiste numa mudança de ilumin
 ## Simulação
 ———————————————————————————
 
-Simulando com os valores de entrada:     
+#### Simulando com os valores de entrada:     
 Iluminação externa = 1.85 cd/m²     
 Sensibilidade do olho = 0.842 (alta)     
 Iluminação Interna = 1963 lux     
-![Drag Racing](semluz.gif)
+![primeiro](primeiro.gif)
 
+#### Simulando com os valores de entrada:
+Iluminação externa = 0.118
+Sensibilidade do olho = 0.379 (média)
+Iluminação Interna = 0 lux
+![Sem luz](semluz.gif)
+
+#### Simulando com os valores de entrada:
+Iluminação externa = 0.602
+Sensibilidade do olho = 0.448
+Iluminação Interna = 10000 lux
+![terceiro](terceiro.gif)

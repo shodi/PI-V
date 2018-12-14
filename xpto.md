@@ -33,22 +33,15 @@ Portanto, quanto mais distante o objeto menor a visibilidade.
 #### Acomodação     
 A visibilidade pode ser melhorada com a distância do objeto através do aumento da iluminação E (lux):     
 
-Iluminância (lux)     
-Distância do objeto (cm)
-10
-35
-20
-40
-50
-45
-100
-48
-200
-52
-500
-59
-1000
-63
+| **Iluminância (lux)** | **Distância do objeto (cm)** |
+|-------------------|--------------------------|
+| 10                | 35                       |
+| 20                | 40                       |
+| 50                | 45                       |
+| 100                | 48                       |
+| 200                | 52                       |
+| 500                | 59                       |
+| 1000                | 63                       |
 
 #### Adaptação     
 O olho ajusta-se à diferentes luminância dos objetos através da abertura e fechamento da pupila:     
@@ -61,18 +54,14 @@ Para o olho acomodar-se à escuridão são necessários cerca de 30 minutos. Já
 
 
 
-Fontes de iluminação     
-Iluminância (lux)     
-Céu sem nuvens no verão
-100.000
-Céu encoberto no verão
-20.000
-Plano de trabalho em sala com iluminação natural
-1.000
-Iluminação pública
-20 à 40
-Noite de lua cheia
-0,25
+| **Fontes de iluminação** | **Iluminância (lux)** |
+|-------------------|--------------------------|
+|Céu sem nuvens no verão| 100.000 |
+|Céu encoberto no verão| 20.000 |
+|Plano de trabalho em sala com iluminação natural| 1.000 |
+| Iluminação pública  | 20 à 40 |
+| Noite de lua cheia | 0,25 |
+
 
 #### Acuidade visual     
 
@@ -93,7 +82,7 @@ Onde ∆ é o ângulo subtendido pelo menor detalhe que a pessoa é capaz de per
 
 A candela é a unidade de medida básica do Sistema Internacional de Unidades para a intensidade luminosa. Ela é definida a partir da potência irradiada por uma fonte luminosa em uma particular direção. Seu símbolo é cd. E sua fórmula é dada em:     
 
-Candela = Fluxo Luminoso /  ngulo sólido     
+Candela = Fluxo Luminoso / ângulo sólido     
 
 A Luminância a é uma medida da densidade da intensidade de uma luz refletida numa dada direção, cuja unidade SI é a candela por metro quadrado (cd/m²). Descreve a quantidade de luz que atravessa ou é emitida de uma superfície em questão, e decai segundo um ângulo sólido. Sua fórmula é dada por:     
 

@@ -1,5 +1,4 @@
 # Projeto integrador VI - Simulação em 3D
-———————————————————————————
 
 Centro Universitário Senac – Campus Santo Amaro     
 Bacharelado em Ciência da Computação      
@@ -8,8 +7,6 @@ Prof. Maurício Marengoni
 Daniel Moniz Lucena Freire dos Santos e Henrique Shodi Maeta     
 
 ## Resumo
-———————————————————————————
-
 #### Definição do projeto:     
 Escolher um certo fenômeno ou sistema que possua pelo menos duas variáveis estocástica e simular este sistema fazendo modificações nestas variáveis de forma a entender como o fenômeno/sistema deve funcionar. Apresentar o resultado da simulação através de uma animação em 3D usando computação gráfica.     
 
@@ -17,8 +14,6 @@ Escolher um certo fenômeno ou sistema que possua pelo menos duas variáveis est
 Considerando a definição do projeto, nós desenvolvemos uma simulação em 3D que visa representar os efeitos causados por um ofuscamento da visão por conta de diferença de iluminação entre dois ambientes.     
 
 ## Introdução
-———————————————————————————
-
 Ao acordar, ou mudar de ambiente, ou até mesmo ao abrir uma cortina nós sofremos com a fotofobia ou sensibilidade à luz, ou seja, uma condição em que a pessoa não consegue olhar diretamente para luz ou ficar em ambientes claros, pois os olhos são agredidos. É um sintoma comum que está associado a várias condições diferentes, desde pequenas irritações até emergências médicas graves.     
 
 Os casos leves podem fazer o paciente olhar para baixo ou cerrar os olhos em uma sala bem iluminada. Em casos mais graves, essa condição provoca dor considerável quando os olhos estão expostos a quase qualquer tipo de luz.     
@@ -28,8 +23,6 @@ Fotofobia não é uma doença, mas sim um sintoma de diversas outras condições
 Pessoas com olhos de cor clara podem experimentar fotofobia com mais frequência, uma vez que os pigmentos dos olhos ajudam a proteger da luz forte. Dessa forma, quanto menos pigmento têm os olhos, maiores as chances de agressão e sensibilidade.     
 
 ## Conceitos Fundamentais
-———————————————————————————
-
 A alternância entre a alta e a baixa iluminação faz com que o olho use alternadamente cones e bastones, o que causa a fadiga visual. Para acomodar-se, o olho se ajusta a diferentes distâncias dos objetos através dos seguintes mecanismos:     
 
 Contração ou distinção dos músculos ciliares.     
@@ -120,8 +113,6 @@ A iluminância faz a relação entre o fluxo luminoso que incide na direção pe
 O limite de sensibilidade do olho humano depende de vários fatores, tais como o comprimento de onda da luz. Somos mais sensíveis à luz verde; neste caso, o limite de sensibilidade é da ordem de uma dezena de fótons/segundo. No vermelho ou no azul, precisamos de mais do que 100 fótons/segundo. Grosso modo, podemos estimar em 102 fótons/segundo o limite inferior da sensibilidade do olho humano.     
 
 ## Materiais e Métodos
-———————————————————————————
-
 A primeira parte deste trabalho consistiu em recolher informações suficientes a fim de se entender o problema de ofuscamento da visão e definir, de acordo com o prazo que nos foi proposto, quais ferramentas usaríamos e qual seria de fato a abordagem que tomaríamos para efetivar a simulação.     
 
 Primeiro reunimos artigos que explicassem sobre o funcionamento do olho humano e as técnicas para calcular o ofuscamento da visão por causa da mudança de luminosidade em um determinado ambiente. Concluído a primeira etapa, iniciamos o processo de aprendizado da ferramenta para a criação dos modelos em 3D, onde foi usado a Unreal Engine 4.2.3, uma game engine desenvolvida pela empresa Epic Games. Para entender o uso da ferramenta é necessário o conhecimento prévio dos conceitos de computação de gráfica.     
@@ -133,22 +124,20 @@ Como variáveis estocástica, decidimos que a primeira delas seria a sensibilida
 A simulação é realizada na primeira pessoa e consiste numa mudança de iluminação de um ambiente, onde o valor de luminância é escolhido pelo usuário, podendo controlar como seria a experiência da simulação de acordo com as entradas.      
 
 ## Simulação
-———————————————————————————
-
 #### Simulando com os valores de entrada:     
-Iluminação externa = 1.85 cd/m²     
-Sensibilidade do olho = 0.842 (alta)     
-Iluminação Interna = 1963 lux     
+Iluminação externa = 1.85 cd/m²         
+Sensibilidade do olho = 0.842 (alta)         
+Iluminação Interna = 1963 lux         
 ![primeiro](primeiro.gif)
 
 #### Simulando com os valores de entrada:
-Iluminação externa = 0.118
-Sensibilidade do olho = 0.379 (média)
-Iluminação Interna = 0 lux
+Iluminação externa = 0.118    
+Sensibilidade do olho = 0.379 (média)    
+Iluminação Interna = 0 lux    
 ![Sem luz](semluz.gif)
 
-#### Simulando com os valores de entrada:
-Iluminação externa = 0.602
-Sensibilidade do olho = 0.448
-Iluminação Interna = 10000 lux
+#### Simulando com os valores de entrada:    
+Iluminação externa = 0.602        
+Sensibilidade do olho = 0.448        
+Iluminação Interna = 10000 lux        
 ![terceiro](terceiro.gif)
